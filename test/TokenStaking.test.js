@@ -58,6 +58,12 @@ contract("TokenStaking", async (accounts) => {
         console.log('accounts[2] approves TokenStaking for 50 OP..');
         numTokens = '50';
         const amount = ethers.utils.parseUnits(numTokens)
+        console.log('attempt deposit without granting allowance..')
+        await truffleAssert.reverts(
+            contracts['TokenStaking'].deposit(amount, {from: accounts[2]}),
+            "TokenStaking: call to OpenPredict token contract failed (transferFrom)"
+        );
+
         await contracts['OpenPredict'].approve(contracts['TokenStaking'].address, amount, {from: accounts[2]});
         console.log('call deposit..');
         await contracts['TokenStaking'].deposit(amount, {from: accounts[2]});
@@ -170,6 +176,10 @@ contract("TokenStaking", async (accounts) => {
         console.log('setRewardPool from owner...')
         await contracts['TokenStaking'].setRewardPool(accounts[1]);
 
+        console.log('assert set...')
+        const rewardPoolAddress = await contracts['TokenStaking'].getRewardPool();
+        assert.equal(rewardPoolAddress, accounts[1]);
+
         console.log('attempt setOpenPredictToken from non-owner...')
         await truffleAssert.reverts(
             contracts['TokenStaking'].setOpenPredictToken(contracts['OpenPredict'].address, {from: accounts[5]}),
@@ -178,6 +188,16 @@ contract("TokenStaking", async (accounts) => {
 
         console.log('setOpenPredictToken from owner...')
         await contracts['TokenStaking'].setOpenPredictToken(contracts['OpenPredict'].address);
+
+        console.log('assert set...')
+        const openPredictTokenAddress = await contracts['TokenStaking'].getOpenPredictToken();
+        assert.equal(openPredictTokenAddress, contracts['OpenPredict'].address);
+
+        console.log('attempt withdraw on account 3 with no stakes..');
+        await truffleAssert.reverts(
+            contracts['TokenStaking'].withdraw({from: accounts[3]}),
+            "TokenStaking: No staking epochs for address"
+        );
 
 
     })

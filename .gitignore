@@ -1,6 +1,7 @@
 notes.txt
 node_modules/
 build/
+coverage/
 coverage.json
 contracts/coverage
 contracts/artifacts
