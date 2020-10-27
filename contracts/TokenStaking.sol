@@ -14,19 +14,22 @@ contract TokenStaking is Pausable {
     uint depositTime;
     bool claimed;
   }
-
   mapping (address => StakingEpoch[]) StakingPerAddress;
-  address public owner;
 
+  // constants: either hardcoded or set via constructor
+  address public owner;
   address OpenPredictToken;
   address RewardPool;
-
-  uint APR = 26;
+  uint APR = 39;
   uint numDaysPerYear = 365;
-  // Daily Percentage Return per token: 26 (APR)/365 (number of days in a year) expressed in wei
-  uint DPR = 712328767123287;     
-  uint secsDaily;
+  // Daily Percentage Return per token: 0.39 (APR)/365 (number of days in a year) expressed in wei
+  uint DPR;
+  // contract limit: 75k OP
+  uint depositLimit = 75000000000000000000000;
   uint minimumDeposit = 50 * 1 ether;
+  uint secsDepositTime = 7776000; // 90 days in seconds
+  uint secsDaily;
+  uint depositPeriodEnd;
 
   // start gatekeeping functions
   function _onlyOwner() private view {
@@ -41,10 +44,23 @@ contract TokenStaking is Pausable {
     require(amount >= minimumDeposit, "TokenStaking: Amount staked must be greater than 50 OP");
   }
 
-  constructor(address _OpenPredictToken, address _RewardPool, uint _secsDaily) public {
+  function _maximumAmountNotReached(uint amount) private {
+    require(SafeMath.add(balanceOf(address(this)), amount) <= depositLimit,
+            "TokenStaking: Contract balance with deposited amount exceeds deposit limit");
+  }
+
+  function _depositTimeNotReached() private view {
+    require(block.timestamp < depositPeriodEnd,
+            "TokenStaking: Deposit period ended");
+  }
+
+  constructor(address _OpenPredictToken, address _RewardPool, uint _secsDaily, uint _secsDepositTime) public {
     OpenPredictToken = _OpenPredictToken;
     RewardPool = _RewardPool;
     secsDaily = _secsDaily;
+    secsDepositTime = _secsDepositTime;
+    depositPeriodEnd = block.timestamp + secsDepositTime;
+    DPR = (APR * 10**16) / numDaysPerYear; // ((APR / 100) * 10^18) / 365
     owner = msg.sender;
   }
 
@@ -52,6 +68,8 @@ contract TokenStaking is Pausable {
     whenNotPaused
     external {
     _minimumAmount(amount);
+    _maximumAmountNotReached(amount);
+    _depositTimeNotReached();
 
     // transfer from msg.sender to this contract. allowance must have been granted before.
     transferFrom(msg.sender, address(this), amount);
@@ -70,8 +88,10 @@ contract TokenStaking is Pausable {
       StakingEpoch storage stakingEpoch = stakingEpochs[i];
       if(stakingEpoch.claimed == true)
         continue;
+      // reward accumulation finishes at depositPeriodEnd. so only calculate until there.
+      uint withdrawTime = (block.timestamp < depositPeriodEnd) ? block.timestamp : depositPeriodEnd;
       // calculate number of days since depositTime
-      uint numDays = (block.timestamp - stakingEpoch.depositTime) / secsDaily; // will auto round down
+      uint numDays = (withdrawTime - stakingEpoch.depositTime) / secsDaily; // will auto round down
       // calculate stake reward
       uint reward = ((numDays * DPR * stakingEpoch.amount))/ 1 ether;
       // transfer reward from pool
