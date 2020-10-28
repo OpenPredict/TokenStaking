@@ -1,11 +1,97 @@
 <app-app-header></app-app-header>
 
 <ion-content>
-   <div class="logo">
-      <img src="/assets/img/rawlogo.svg" alt="">
-   </div>
+   
 
-   <span class="heading">OpenPredict Staking</span>
+   <div class="o-container">
+      
+
+
+      <img src="/assets/img/logo-main.svg" alt="">
+      
+      <h1 class="opHeader">
+         OpenPredict Staking
+      </h1>
+      
+      <p>
+         OpenPredict Staking
+      </p>      
+
+      <div class="rewardStatus">
+         <div class="rewardStatus__item">
+            <div class="rewardStatus__label">
+               Event pair:
+            </div>  
+            <div class="rewardStatus__value">
+               50 OPT
+            </div>                         
+         </div>    
+         
+         <div class="rewardStatus__item">
+            <div class="rewardStatus__label">
+              Reward frequency:
+            </div>  
+            <div class="rewardStatus__value">
+              24h
+            </div>                         
+         </div>    
+         
+         <div class="rewardStatus__item">
+            <div class="rewardStatus__label">
+              APR:
+            </div>  
+            <div class="rewardStatus__value">
+              26%
+            </div>                         
+         </div>             
+         
+      </div>
+      
+      
+      <!-- <div class="harvest"> -->
+         
+         <div class="harvest">
+            <div class="harvest__item">
+               <div class="harvest__value">
+                  0.000
+               </div>   
+               <div class="harvest__label">
+                  OPT earned
+               </div>      
+               <button class="btn btn-grey">
+                  <div class="btnInner">
+                     <span>Harvest</span>                     
+                  </div>
+               </button>                             
+            </div> 
+            <div class="harvest__item">
+               <div class="harvest__value">
+                  0.000
+               </div>   
+               <div class="harvest__label">
+                  OPT earned
+               </div>      
+               <button class="btn btn-unlock" (click)="deposit()">
+                  <div class="btnInner">
+                     <img src="/assets/img/lock.svg" alt="" srcset="">
+                     <span>Unlock</span>                    
+                  </div>                  
+               </button>                             
+            </div>          
+         </div>
+         
+         <p>
+            Every time you stake and unstake OPT tokens, the contract will automagically harvest rewards for you!
+         </p>
+      </div>
+      
+      
+      
+      
+      
+   <!-- </div> -->
+   
+   <!-- <span class="heading"></span>
    <span class="subheading">Deposit OPT and earn OPT</span>
 
     <div class="v1_15"></div>
@@ -50,6 +136,6 @@
     <span class="v1_49">Reward frequency:</span>
     <span class="v1_50">50 OPT</span>
     <span class="v1_51">26%</span>
-    <span class="v1_52">24h</span>
+    <span class="v1_52">24h</span> -->
 
  </ion-content>
