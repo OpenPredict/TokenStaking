@@ -649,8 +649,13 @@ button {
     padding: 9px;
     transition: transform 300ms ease-in-out;
     transform: scale(1.01);
+    outline: none!important;
     
-    &:hover {
+    &:disabled {
+        background: #A6AEBE!important;  
+    }
+    
+    &:not(:disabled):hover {
         transition: transform 300ms ease-in-out;
         transform: scale(1.1);                
     }
@@ -670,9 +675,9 @@ button {
         font-size: 14px;
         line-height: 17px;                
     }
-    &.btn-grey {
-        background: #A6AEBE;          
-    }
+    // &.btn-grey {
+    //     background: #A6AEBE;          
+    // }
     
     &.btn-white {
         background: #ffffff;     
@@ -696,6 +701,15 @@ input[type=number] {
     padding: 10px;    
 }
 
+
+h2.modalHeader {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    color: #89F4ED;    
+}
 
 // .winRatioEstimator {
 //     width: 310px;
