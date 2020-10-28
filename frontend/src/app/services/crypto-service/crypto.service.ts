@@ -128,6 +128,22 @@ export class CryptoService {
       }
     });
   }
+  
+  
+  async activeSigner() {
+    return new Promise( async (resolve, reject) => {
+      try {
+        //this.opEventQuery.clearState();
+        const signer: any = await this.getSigner();
+        const wallet: any = await this.signerAddress();
+        if (wallet && signer) {
+         return resolve({ wallet, signer});
+        }
+      } catch (error) {
+       return reject(false);
+      }
+    });
+  }   
 
 /** Utils  */
 getNextContractAddress(address: any, nonce: any){

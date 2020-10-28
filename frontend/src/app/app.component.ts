@@ -54,27 +54,15 @@ export class AppComponent {
   }
 
   async initialize() {
-    const wallet: any = await this.activeSigner();
-    this._auth.login(wallet.wallet, wallet.signer);
-    //this.opEventService.setupEventSubscriber();
-    this.navCtrl.navigateForward('/landing');
+    const wallet: any = await this.crypto.activeSigner();
+    if(wallet.hasOwnProperty('wallet') && wallet.hasOwnProperty('signer')) {
+      this._auth.login(wallet.wallet, wallet.signer);
+      //this.opEventService.setupEventSubscriber();
+      this.navCtrl.navigateForward('/landing');      
+    }
   }
 
-  async activeSigner() {
-    return new Promise( async (resolve, reject) => {
-      try {
-        //this.opEventQuery.clearState();
-        const signer: any = await this.crypto.getSigner();
-        const wallet: any = await this.crypto.signerAddress();
-        if (wallet && signer) {
-         return resolve({ wallet, signer});
-        }
-      } catch (error) {
-       return reject(false);
-      }
-    });
 
-  }
 
 
 
