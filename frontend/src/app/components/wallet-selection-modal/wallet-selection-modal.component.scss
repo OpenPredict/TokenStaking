@@ -1,0 +1,67 @@
+:host {
+    width: 100%;
+}
+
+    ul.walletSelectionModal__list {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 20px;
+        
+        
+        li.walletSelectionModal__item {
+            display: flex;
+            flex-direction: row;
+            // flex: 1;
+            width: 48%;
+            border: 1px solid #6F757D;
+            box-sizing: border-box;
+            border-radius: 10px;
+            padding: 5px;
+            background: center;
+            // margin: 1%;
+            margin: 1% auto;
+            justify-content: space-evenly;
+            align-items: center;
+            transition: all 300ms ease-in-out;
+            cursor: pointer;
+            
+            background: #89F4ED;
+            box-shadow: -10px -10px 15px -5px #2A3958, 10px 10px 15px -5px rgba(0, 0, 0, 0.25);
+            border-radius: 20px;            
+            
+            
+            &:hover {
+                transition: all 300ms ease-in-out;
+                background-color: #6F757D;
+                .walletSelectionModal__name {
+                    color: white;                    
+                }
+            }
+            
+            .walletSelectionModal__name {
+                // font-family: Inter;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 16px;
+                line-height: 1;
+                text-align: center;
+                color: #2B2D42;              
+            }
+            .walletSelectionModal__icon {
+                width: 35px;
+                height: 35px;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: contain;
+                &.i-metamask {
+                    background-image: url(/assets/img/metamask.svg);
+                }
+                &.i-trustwallet {
+                    background-image: url(/assets/img/trustwallet.svg);
+                }                
+            }
+        }
+    }
+    
