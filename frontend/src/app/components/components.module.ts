@@ -11,6 +11,8 @@ import { WagerInformationOutputComponent } from "@components/wager-information-o
 import { WagerSelectedTokenComponent } from "@components/wager-selected-token/wager-selected-token.component";
 import { EventItemComponent } from "@components/event-item/event-item.component";
 import { DepositModalComponent } from "@components/deposit-modal/deposit-modal.component";
+import { WalletSelectionModalComponent } from "@components/wallet-selection-modal/wallet-selection-modal.component";
+import { WalletOptionsModalComponent } from "@components/wallet-options-modal/wallet-options-modal.component";
 
 const components = [
   ConnectWallet,
@@ -18,7 +20,9 @@ const components = [
   WagerInformationOutputComponent,
   WagerSelectedTokenComponent,
   EventItemComponent,
-  DepositModalComponent
+  DepositModalComponent,
+  WalletSelectionModalComponent,
+  WalletOptionsModalComponent,
 ]
 
 @NgModule({
