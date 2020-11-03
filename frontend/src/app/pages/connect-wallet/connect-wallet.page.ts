@@ -55,6 +55,7 @@ export class ConnectWalletPage implements OnInit {
 
       if (wallet && signer) {
         this._auth.login(wallet, signer);
+        console.log('signing in..');
         this.navCtrl.navigateForward('/landing');
       }
     } catch (error) {

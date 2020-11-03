@@ -5,3 +5,4 @@ coverage/
 coverage.json
 contracts/coverage
 contracts/artifacts
+frontend/www

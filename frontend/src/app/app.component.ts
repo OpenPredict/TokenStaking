@@ -3,9 +3,9 @@ import { Component } from '@angular/core';
 import { Config, NavController, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { OptionService } from './services/option-service/option.service';
 import { CryptoService } from './services/crypto-service/crypto.service';
 import { AuthService } from './services/auth-service/auth.service';
+import { StakingService } from './services/staking-service/staking.service';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +18,8 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private config: Config,
     private statusBar: StatusBar,
-    public optionsSrv: OptionService,
     public crypto: CryptoService,
+    public stakingService: StakingService,
     public navCtrl: NavController,
     public _auth: AuthService,
   ) {
@@ -27,8 +27,6 @@ export class AppComponent {
   }
 
   initializeApp() {
-    this.optionsSrv.get().subscribe();
-
 
     this.crypto.netChange();
 
@@ -57,8 +55,8 @@ export class AppComponent {
     const wallet: any = await this.crypto.activeSigner();
     if(wallet.hasOwnProperty('wallet') && wallet.hasOwnProperty('signer')) {
       this._auth.login(wallet.wallet, wallet.signer);
-      //this.opEventService.setupEventSubscriber();
-      this.navCtrl.navigateForward('/landing');      
+      await this.stakingService.setupSubscribers();
+      this.navCtrl.navigateForward('/landing');
     }
   }
 

@@ -15,8 +15,8 @@ export class WalletGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      const option =  this.authQry.getValue()
-      if(!option || !option.wallet ) {
+      const option =  this.authQry.getValue();
+      if (!option || !option.wallet ) {
         console.log('redirecting to connect wallet ');
         this.router.navigateByUrl('/connect-wallet');
       }

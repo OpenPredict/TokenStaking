@@ -19,16 +19,14 @@ export class WalletSelectionModalComponent implements OnInit {
      ) { }
 
   ngOnInit() {}
-  
+
   async openMetamask() {
     this.auth.logout();
     const wallet: any = await this.crypto.activeSigner();
-    if(wallet && wallet.hasOwnProperty('wallet') && wallet.hasOwnProperty('signer')) {
+    if (wallet && wallet.hasOwnProperty('wallet') && wallet.hasOwnProperty('signer')) {
+      console.log('loggin in son');
       this.auth.login(wallet.wallet, wallet.signer);
     }
-    this.modalCtrl.dismiss()
+    this.modalCtrl.dismiss();
   }
-
- 
-
 }

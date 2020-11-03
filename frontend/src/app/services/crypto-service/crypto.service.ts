@@ -8,7 +8,6 @@ import AppEth from '@ledgerhq/hw-app-eth';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/map';
 import { AuthService } from '../auth-service/auth.service';
-//import { OpEventService } from '../op-event-service/op-event.service';
 
 const rlp = require('rlp');
 const keccak = require('keccak');
@@ -26,7 +25,6 @@ export class CryptoService {
   constructor(
     public router: Router,
     // public _auth: AuthService,
-    // public opEvent: OpEventService
     ) {}
 
   netChange() {
