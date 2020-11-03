@@ -64,7 +64,7 @@ contract("TokenStaking", async (accounts) => {
         await sendTokensToAddresses(contracts, accounts);
     })
 
-    it.only("Should pass for test case A", async () => {
+    it("Should pass for test case A", async () => {
 
         console.log('accounts[2] approves TokenStaking for 50 OP..');
         const amount = ethers.utils.parseUnits(minDeposit);

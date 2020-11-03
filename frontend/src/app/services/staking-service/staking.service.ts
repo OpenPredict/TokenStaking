@@ -26,7 +26,7 @@ export const options: any[] = [];
 export class StakingService {
 
   staking = {};  // this gets fed into the form modal to show the balance, retrive from wherever and populate this variable
-  rewardPeriodSeconds = 10;
+  rewardPeriodSeconds = 20;
 
   balanceUpdates = {}; // stores Ids of new deposit events, to prevent the same event affecting state.
 
@@ -96,7 +96,7 @@ export class StakingService {
           if (!(id in this.balanceUpdates)){
             this.balanceUpdates[id] = true;
             if (to === this.address) {
-              console.log('Balance add - to wallet address from: ' + to);
+              console.log('Balance add - to wallet address from: ' + from);
               currentBalance = currentBalance.add(amount);
             }
             if (from === this.address) {
@@ -107,7 +107,13 @@ export class StakingService {
               id: this.address,
               OPTBalance: currentBalance
             };
-            this.stakingStore.upsert(this.address, balanceStore);
+            this.staking[this.address] = {
+              id: this.address,
+              OPTBalance: currentBalance,
+              staked: this.staking[this.address].staked,
+              rewards: this.staking[this.address].rewards
+            };
+            this.stakingStore.upsert(this.address, this.staking[this.address]);
             console.log('balance: ' + currentBalance.valueOf().toString());
           }
         }
@@ -137,7 +143,7 @@ export class StakingService {
           console.log('id: ' + id);
           if (!(id in this.balanceUpdates)){
             this.balanceUpdates[id] = true;
-          const amount = ethers.BigNumber.from(events['args'][1]);
+            const amount = ethers.BigNumber.from(events['args'][1]);
             // Update staked amount
             this.staking[this.address] = {
               id: this.address,
@@ -161,9 +167,9 @@ export class StakingService {
       let nextPeriodsPassed = 0;
       const currentTime = Math.floor(Date.now() / 1000);
       const currentPeriodsPassed = Math.floor((currentTime - depositPeriodStart) / this.rewardPeriodSeconds);
-      //console.log('currentTime: ' + currentTime);
-      //console.log('depositPeriodStart: ' + depositPeriodStart);
-      //console.log('currentPeriodsPassed: ' + currentPeriodsPassed);
+      // console.log('currentTime: ' + currentTime);
+      // console.log('depositPeriodStart: ' + depositPeriodStart);
+      // console.log('currentPeriodsPassed: ' + currentPeriodsPassed);
       do {
         const currentBlock = await this.crypto.provider().getBlock(this.crypto.provider().getBlockNumber());
         const timestamp = currentBlock['timestamp'];
@@ -171,25 +177,25 @@ export class StakingService {
         // calc days
         nextPeriodsPassed = Math.floor((timestamp - depositPeriodStart) / this.rewardPeriodSeconds);
 
-        //console.log('timestamp: ' + timestamp);
-        //console.log('index: ' + currentBlock['number'].toString());
-        //console.log('currentPeriodsPassed: ' + currentPeriodsPassed);
-        //console.log('nextPeriodsPassed: ' + nextPeriodsPassed);
+        // console.log('timestamp: ' + timestamp);
+        // console.log('index: ' + currentBlock['number'].toString());
+        // console.log('currentPeriodsPassed: ' + currentPeriodsPassed);
+        // console.log('nextPeriodsPassed: ' + nextPeriodsPassed);
         await this.timeout(1);
       }while (currentPeriodsPassed !== nextPeriodsPassed);
   }
 
   async updateHoldingsEveryPeriod() {
     // set a timer to update the status following depositPeriodEnd. timer restarts every period.
-    //console.log('Entering updateHoldingsEveryPeriod..');
+    console.log('Entering updateHoldingsEveryPeriod..');
     const depositPeriodStartRaw = await this.contracts['TokenStaking'].getDepositPeriodStart();
     const depositPeriodStart = parseInt(depositPeriodStartRaw.toString());
 
     while (true){
-      //console.log('New period..');
+      console.log('New period..');
       // Update the holdings from the chain at every timer restart.
       const holdingsRaw = await this.contracts['TokenStaking'].getHoldings();
-      //console.log('holdingsRaw: ' + holdingsRaw);
+      console.log('holdingsRaw: ' + holdingsRaw);
       this.staking[this.address] = {
         id: this.address,
         OPTBalance: this.staking[this.address].OPTBalance,
@@ -202,8 +208,8 @@ export class StakingService {
       const currentTime = Math.floor(Date.now() / 1000);
       // gives us a value in the range of 0...this.rewardPeriodSecond) that is the remaining seconds to the next period.
       const timeToRewardChange = this.rewardPeriodSeconds - ((currentTime % depositPeriodStart) % this.rewardPeriodSeconds);
-      //console.log('timeToRewardChange: ' + timeToRewardChange);
-      //console.log('waiting..');
+      console.log('timeToRewardChange: ' + timeToRewardChange);
+      console.log('waiting..');
       await this.timeout(timeToRewardChange);
       this.completePeriod(depositPeriodStart);
     }
