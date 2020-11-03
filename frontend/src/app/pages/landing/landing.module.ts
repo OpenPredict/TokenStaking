@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { LandingPage } from './landing.page';
 
 import { LandingPageRoutingModule } from './landing-routing.module';
-import { SharedModule } from "@app/shared.module";
+import { SharedModule } from '@app/shared.module';
 
 @NgModule({
   imports: [

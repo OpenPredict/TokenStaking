@@ -8,6 +8,7 @@ import "openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
 contract TokenStaking is Pausable {
 
   using SafeMath for uint256;
+  event Deposit(address,uint256);
 
   struct StakingEpoch {
     uint amount;
@@ -30,6 +31,7 @@ contract TokenStaking is Pausable {
   uint secsDepositTime = 7776000; // 90 days in seconds
   uint secsDaily;
   uint depositPeriodEnd;
+  uint depositPeriodStart;
 
   // start gatekeeping functions
   function _onlyOwner() private view {
@@ -59,6 +61,7 @@ contract TokenStaking is Pausable {
     RewardPool = _RewardPool;
     secsDaily = _secsDaily;
     secsDepositTime = _secsDepositTime;
+    depositPeriodStart = block.timestamp;
     depositPeriodEnd = block.timestamp + secsDepositTime;
     DPR = (APR * 10**16) / numDaysPerYear; // ((APR / 100) * 10^18) / 365
     owner = msg.sender;
@@ -77,12 +80,14 @@ contract TokenStaking is Pausable {
     // Create new StakingEpoch at this address
     StakingPerAddress[msg.sender].push(StakingEpoch(amount, block.timestamp, false));
 
+    emit Deposit(msg.sender, amount);
+
   }
   function withdraw () 
   whenNotPaused
-  external {
+  external returns(uint totalRewards) {
     _hasStakingEpoch();
-    
+    totalRewards = 0;
     StakingEpoch[] storage stakingEpochs = StakingPerAddress[msg.sender];
     for(uint i=0; i<stakingEpochs.length; i++){
       StakingEpoch storage stakingEpoch = stakingEpochs[i];
@@ -100,6 +105,7 @@ contract TokenStaking is Pausable {
       transfer(msg.sender, stakingEpoch.amount);
       // set epoch as claimed.
       stakingEpoch.claimed = true;
+      totalRewards += reward;
     }
   }
 
@@ -171,7 +177,31 @@ contract TokenStaking is Pausable {
       }
   } 
 
+  function getDepositPeriodStart() public view returns(uint256) {
+    return depositPeriodStart;
+  }
+
   function getStakingPerAddress() public view returns(StakingEpoch[] memory){
     return StakingPerAddress[msg.sender];
+  }
+
+  function getHoldings() public view returns(uint256[] memory holdings) {
+    holdings = new uint256[](2);
+    holdings[0] = 0; // deposit total
+    holdings[1] = 0; // reward total
+    StakingEpoch[] storage stakingEpochs = StakingPerAddress[msg.sender];
+    for(uint i=0; i<stakingEpochs.length; i++){
+      StakingEpoch storage stakingEpoch = stakingEpochs[i];
+      if(stakingEpoch.claimed == true)
+        continue;
+      holdings[0] += stakingEpoch.amount;
+      // reward accumulation finishes at depositPeriodEnd. so only calculate until there.
+      uint withdrawTime = (block.timestamp < depositPeriodEnd) ? block.timestamp : depositPeriodEnd;
+      // calculate number of days since depositTime
+      uint numDays = (withdrawTime - stakingEpoch.depositTime) / secsDaily; // will auto round down
+      // calculate stake reward
+      uint reward = ((numDays * DPR * stakingEpoch.amount))/ 1 ether;
+      holdings[1] += reward;
+    }
   }
 }

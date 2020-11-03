@@ -7,7 +7,7 @@
          OpenPredict Staking
       </h1>
       <p>
-         OpenPredict Staking
+         Stake OPT and earn OPT
       </p>      
       <div class="rewardStatus">
          <div class="rewardStatus__item">
@@ -35,17 +35,17 @@
             </div>                         
          </div>             
       </div>
-         <div class="harvest">
+         <div class="harvest" *ngIf="(stakingData$ | async) as stakingData">
             <div class="harvest__item">
                <div class="harvest__value">
-                  0.000
+                  {{ parseAmount(stakingData.rewards) }}
                </div>   
                <div class="harvest__label">
                   OPT earned
                </div>      
                <button
                class="btn btn-unlock"
-               [disabled]="harvestDisabledForSomeReason"
+               [disabled]="false"
                (click)="harvest()"
                >
                   <div class="btnInner">
@@ -55,7 +55,7 @@
             </div> 
             <div class="harvest__item">
                <div class="harvest__value">
-                  0.000
+                  {{ parseAmount(stakingData.staked) }}
                </div>   
                <div class="harvest__label">
                   OPT staked
@@ -66,9 +66,9 @@
                      <span>Unlock</span>                    
                   </div>                  
                </button>     
-               <button class="btn btn-unlock" *ngIf="loggedIn$ | async" (click)="deposit()">
+               <button class="btn btn-unlock" *ngIf="loggedIn$ | async" (click)="stake()">
                   <div class="btnInner">
-                     <span>Approve OPT</span>                    
+                     <span>Stake OPT</span>                    
                   </div>                  
                </button>                  
             </div>          
