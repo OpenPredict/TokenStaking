@@ -26,9 +26,10 @@ p {
     border: 1px solid #89F4ED;
     border-radius: 20px;
     justify-content: space-between;
-    padding: 20px 40px;
+    padding: 20px 0px;
     margin: 30px auto;
     .rewardStatus__item {
+        flex: 1;
         .rewardStatus__label {
             // font-family: Montserrat;
             font-style: normal;
