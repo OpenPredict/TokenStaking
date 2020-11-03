@@ -28,6 +28,8 @@ export class StakingService {
   staking = {};  // this gets fed into the form modal to show the balance, retrive from wherever and populate this variable
   rewardPeriodSeconds = 10;
 
+  balanceUpdates = {}; // stores Ids of new deposit events, to prevent the same event affecting state.
+
   address = '';
   contracts = [];
 
@@ -38,9 +40,7 @@ export class StakingService {
     private stakingStore: StakingStore,
     public navCtrl: NavController,
     public toastCtrl: ToastController,
-    public ui: UiService) {
-      //this.setupSubscribers();
-    }
+    public ui: UiService) {}
 
     get(): Observable<void> {
       const request = timer(500).pipe(
@@ -81,21 +81,20 @@ export class StakingService {
             ethers.utils.id('Transfer(address,address,uint256)'),
           ],
       }, async (log) => {
-        const events = abi.parseLog(log);
-        const from = events['args'][0];
-        const   to = events['args'][1];
-        console.log('from: ' + from);
-        console.log('to: ' + to);
-        if (from === this.address || to === this.address) {
-          const amount = ethers.BigNumber.from(events['args'][2]);
-          console.log('amount: ' + amount);
+        console.log(log);
+        const from = ethers.utils.getAddress('0x' + log['topics'][1].substring(26));
+        const to   = ethers.utils.getAddress('0x' + log['topics'][2].substring(26));
 
+        if (from === this.address || to === this.address) {
+          const amount = ethers.BigNumber.from(log['data']);
+          console.log('amount: ' + amount);
           // Unique identifier for log
-          const id = ethers.utils.keccak256(log['transactionHash'].concat(log['logIndex']));
+          const id = log['transactionHash'].concat(log['logIndex']);
+          console.log('id: ' + id);
           let currentBalance = this.staking[this.address].OPTBalance;
 
-          if (!(id in this.staking)){
-            this.staking[id] = true;
+          if (!(id in this.balanceUpdates)){
+            this.balanceUpdates[id] = true;
             if (to === this.address) {
               console.log('Balance add - to wallet address from: ' + to);
               currentBalance = currentBalance.add(amount);
@@ -134,9 +133,11 @@ export class StakingService {
         console.log('sender: ' + sender);
         if (sender === this.address) {
           // Unique identifier for log
-          const id = ethers.utils.keccak256(log['transactionHash'].concat(log['logIndex']));
-          if (!(id in this.staking)){
-            const amount = ethers.BigNumber.from(events['args'][1]);
+          const id = log['transactionHash'].concat(log['logIndex']);
+          console.log('id: ' + id);
+          if (!(id in this.balanceUpdates)){
+            this.balanceUpdates[id] = true;
+          const amount = ethers.BigNumber.from(events['args'][1]);
             // Update staked amount
             this.staking[this.address] = {
               id: this.address,
