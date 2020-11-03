@@ -1,7 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormArray, Validators } from '@angular/forms';
 import { BaseForm } from '@app/helpers/BaseForm';
+import { CustomValidators } from '@app/helpers/CustomValidators';
+import { StakingService } from '@app/services/staking-service/staking.service';
+import { StakingQuery } from '@app/services/staking-service/staking.service.query';
 import { ModalController } from '@ionic/angular';
+import { ethers } from 'ethers';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
+import { TextMaskModule } from 'angular2-text-mask';
 
 @Component({
   selector: 'app-deposit-modal',
@@ -10,29 +16,41 @@ import { ModalController } from '@ionic/angular';
 })
 export class DepositModalComponent  extends BaseForm implements OnInit {
 
-  @Input() balance: number;  
-  @Input() action: number;    
-  
+  @Input() balance: number;
+  @Input() action: number;
+
+  tokenMask = BaseForm.tokenMask;
+
+  stakingData$ = this.stakingQuery.selectEntity(this.stakingService.address);
+
   constructor(
     private fb: FormBuilder,
     private modalCtrl: ModalController,
+    private stakingQuery: StakingQuery,
+    private stakingService: StakingService,
     ) {
-    super()
+    super();
     this.form = this.fb.group({
-      amount: [null, Validators.compose([Validators.required])],                                                               
-    });     
+      amount: [null, Validators.compose([Validators.required])],
+    });
+
+    this.form.get('amount').setValidators([CustomValidators.minimumNumber(50)]);
   }
 
   ngOnInit() {}
 
   cancel() {
-    this.modalCtrl.dismiss()
+    this.modalCtrl.dismiss();
   }
 
   confirm() {
-    let amount = this.form.controls['amount'].value
-    this.modalCtrl.dismiss( amount ) // send this to some service/metamask
-  }  
-  
-  
+    const amount = this.form.controls['amount'].value;
+    this.modalCtrl.dismiss( amount );
+  }
+
+  parseAmount(amount) {
+    return (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
+  }
+
+
 }

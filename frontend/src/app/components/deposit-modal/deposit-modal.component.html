@@ -9,11 +9,11 @@
               
     <li>
       <label position="stacked">
-        <div class="standardInputLabel">
-          Available to stake: {{ balance }}
+        <div class="standardInputLabel" *ngIf="(stakingData$ | async) as stakingData">
+          Available to stake: {{ parseAmount(stakingData.OPTBalance) }}
         </div>
       </label>
-      <input type="number" class="standardInput" formControlName="amount" required />
+      <input class="standardInput" type="text" min="0" formControlName="amount" placeholder="0.00" [textMask]="{mask: tokenMask }" />
       <div *ngIf="hasError('amount', 'required')" class="standardInputErr">
         amount is required
       </div>                     

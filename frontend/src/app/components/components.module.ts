@@ -9,6 +9,7 @@ import { AppHeaderComponent } from '@components/app-header/app-header.component'
 import { DepositModalComponent } from '@components/deposit-modal/deposit-modal.component';
 import { WalletSelectionModalComponent } from '@components/wallet-selection-modal/wallet-selection-modal.component';
 import { WalletOptionsModalComponent } from '@components/wallet-options-modal/wallet-options-modal.component';
+import { TextMaskModule } from 'angular2-text-mask';
 
 const components = [
   ConnectWallet,
@@ -26,6 +27,7 @@ const components = [
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
+    TextMaskModule,
   ],
   providers: [],
   declarations: components,

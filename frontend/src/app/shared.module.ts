@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '@pipes/pipes.module';
 import { ComponentsModule } from '@components/components.module';
-
+import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
   imports: [
@@ -15,6 +15,7 @@ import { ComponentsModule } from '@components/components.module';
     FormsModule,
     ReactiveFormsModule,
     ComponentsModule,
+    TextMaskModule
   ],
   providers: [CurrencyPipe, DecimalPipe],
   declarations: [],
@@ -26,6 +27,7 @@ import { ComponentsModule } from '@components/components.module';
     FormsModule,
     ReactiveFormsModule,
     ComponentsModule,
+    TextMaskModule
   ]
 })
 export class SharedModule {}

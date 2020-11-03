@@ -1,4 +1,5 @@
-import { FormControl, FormGroup, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
+import { BaseForm } from './BaseForm';
 
 export class CustomValidators {
     
@@ -91,6 +92,19 @@ export class CustomValidators {
             passwords.passwordConfirm.setErrors({passwordMismatch: true})
 
         return null
+    }
+
+    static minimumNumber(minimum: number): ValidatorFn {
+      return (control: AbstractControl): ValidationErrors | null => {
+
+        const error: ValidationErrors = { number: true };
+        console.log('control.value: ' + control.value);
+        const parsed = BaseForm.transformAmount(control.value);
+        const result = (parsed < minimum || isNaN(parsed)) ? error : null;
+
+        control.setErrors(result);
+        return result;
+      };
     }
 
 }

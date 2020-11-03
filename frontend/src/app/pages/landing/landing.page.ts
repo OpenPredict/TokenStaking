@@ -123,7 +123,7 @@ export class LandingPage implements OnInit {
   }
 
   parseAmount(amount) {
-    return (isNaN(amount)) ? 0 : ethers.utils.formatUnits(amount.toString());
+    return (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
   }
 
 }
