@@ -5,14 +5,24 @@ module.exports = {
     Constants: {
         'development' : {
             provider : new ethers.providers.JsonRpcProvider("http://" + truffleConfig.networks.development.host + ":" + truffleConfig.networks.development.port.toString()),
-            //eventPeriod
-            secret: truffleConfig.networks.development.secret
+            secret: truffleConfig.networks.development.secret,
+            periodSeconds : 86400,      // 1 day
+            depositPeriodEnd: 7956000   // 90 days
         },
         'kovan': {
             provider : new ethers.providers.JsonRpcProvider('https://kovan.infura.io/v3/fb44167f83e740898c90737b6ec456d8'),
-            //eventPeriod
             secret: truffleConfig.networks.kovan.secret,
+            periodSeconds : 86400,      // 1 day
+            depositPeriodEnd: 7956000   // 90 days
         },
+        'test' : {
+            provider : new ethers.providers.JsonRpcProvider("http://" + truffleConfig.networks.development.host + ":" + truffleConfig.networks.development.port.toString()),
+            secret: truffleConfig.networks.development.secret,
+            periodSeconds : 4,
+            depositPeriodEnd : 20,
+        },
+        minDeposit : '50',
+        contractLimit : '75000',
     },
 
     getNextContractAddress: function (address, nonce){
