@@ -69,7 +69,7 @@ export class LandingPage implements OnInit {
         try {
           const interaction = await this.ui
                                   .loading(  this.stakingService.deposit(amount),
-                                  'You wsill be prompted for 2 contract interactions, please approve all to successfully stake, and please be patient as it may take a few moments to broadcast to the network.' )
+                                  'You will be prompted for 2 contract interactions, please approve all to successfully stake, and please be patient as it may take a few moments to broadcast to the network.' )
                                   .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
           if (interaction) {
               this.showContractCallSuccess('Success! Your stake has been placed.');
