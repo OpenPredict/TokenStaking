@@ -8,10 +8,10 @@
            <span>Unlock</span>                    
         </div>                  
      </button>    
-     
-     <button class="btn btn-unlock" *ngIf="loggedIn$ | async" (click)="options()">
+
+     <button class="btn btn-header btn-unlock" *ngIf="loggedIn$ | async" (click)="options()">
       <div class="btnInner">
-         <span>My Wallet</span>                    
+        <crypto-address-display [address]="address"></crypto-address-display> <span>My Wallet</span>                    
       </div>                  
    </button>         
      
