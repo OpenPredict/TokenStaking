@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { CryptoService } from './services/crypto-service/crypto.service';
 import { AuthService } from './services/auth-service/auth.service';
 import { StakingService } from './services/staking-service/staking.service';
+import { ethers } from 'ethers';
 
 @Component({
   selector: 'app-root',
@@ -26,8 +27,10 @@ export class AppComponent {
     this.initializeApp();
   }
 
-  initializeApp() {
+  async initializeApp() {
 
+    await this.crypto.setNetwork()
+    
     this.crypto.netChange();
 
     this.platform.ready().then( async () => {
@@ -36,9 +39,6 @@ export class AppComponent {
         if(accounts) {
           this.initialize();
         }
-      });
-      window.ethereum.on('networkChanged', async (networkId) => {
-        window.location.reload();
       });
 
       this.initialize();
