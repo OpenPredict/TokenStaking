@@ -19,7 +19,7 @@ const components = [
   WalletSelectionModalComponent,
   WalletOptionsModalComponent,
   CryptoAddressDisplayComponent,
-]
+];
 
 @NgModule({
   imports: [

@@ -25,8 +25,8 @@ export const options: any[] = [];
 })
 export class StakingService {
 
-  staking = {};  // this gets fed into the form modal to show the balance, retrive from wherever and populate this variable
-  rewardPeriodSeconds = 20;
+  staking = {};
+  rewardPeriodSeconds = 86400;
 
   balanceUpdates = {}; // stores Ids of new deposit events, to prevent the same event affecting state.
 
@@ -61,15 +61,21 @@ export class StakingService {
   // ***************** Subscribers ******************
 
   async setupBalanceSubscriber(){
-    // First get OPT balance, then subscribe to changes to balance on-chain.
-    const balanceRaw = await this.contracts['OpenPredict'].balanceOf(this.address);
+    // First get OPT wallet balance, then subscribe to changes to balance on-chain.
+    const walletBalanceRaw = await this.contracts['OpenPredict'].balanceOf(this.address);
+    const contractBalanceRaw = await this.contracts['OpenPredict'].balanceOf(contractAddresses['TokenStaking']);
+
+    console.log('walletBalanceRaw: ' + walletBalanceRaw.toString());
+    console.log('contractBalanceRaw: ' + contractBalanceRaw.toString());
 
     this.staking[this.address] = {
       id: this.address,
-      OPTBalance: ethers.BigNumber.from(balanceRaw),
+      WalletBalance: ethers.BigNumber.from(walletBalanceRaw),
+      ContractBalance: ethers.BigNumber.from(contractBalanceRaw),
       staked: this.staking[this.address].staked,
       rewards: this.staking[this.address].rewards,
     };
+    this.stakingStore.upsert(this.address, this.staking[this.address]);
 
     const abi = new ethers.utils.Interface([
       'event Transfer(address,address,uint256)'
@@ -85,36 +91,51 @@ export class StakingService {
         const from = ethers.utils.getAddress('0x' + log['topics'][1].substring(26));
         const to   = ethers.utils.getAddress('0x' + log['topics'][2].substring(26));
 
-        if (from === this.address || to === this.address) {
+        console.log('from: ' + from);
+        console.log('to: ' + to);
+
+        // Check wallet balance change
+        if (from === this.address ||
+            to === this.address ||
+            from === contractAddresses['TokenStaking'] ||
+            to === contractAddresses['TokenStaking']) {
+
           const amount = ethers.BigNumber.from(log['data']);
           console.log('amount: ' + amount);
           // Unique identifier for log
           const id = log['transactionHash'].concat(log['logIndex']);
           console.log('id: ' + id);
-          let currentBalance = this.staking[this.address].OPTBalance;
+          let currentWalletBalance = this.staking[this.address].WalletBalance;
+          let currentContractBalance = this.staking[this.address].ContractBalance;
 
           if (!(id in this.balanceUpdates)){
             this.balanceUpdates[id] = true;
             if (to === this.address) {
-              console.log('Balance add - to wallet address from: ' + from);
-              currentBalance = currentBalance.add(amount);
+              console.log('Wallet Balance add - to wallet address from: ' + from);
+              currentWalletBalance = currentWalletBalance.add(amount);
             }
             if (from === this.address) {
-              console.log('Balance sub - from wallet address to: ' + to);
-              currentBalance = currentBalance.sub(amount);
+              console.log('Wallet Balance sub - from wallet address to: ' + to);
+              currentWalletBalance = currentWalletBalance.sub(amount);
             }
-            const balanceStore: IStaking = {
-              id: this.address,
-              OPTBalance: currentBalance
-            };
+            if (to === contractAddresses['TokenStaking']) {
+              console.log('Contract Balance add - to contract address from: ' + from);
+              currentContractBalance = currentContractBalance.add(amount);
+            }
+            if (from === contractAddresses['TokenStaking']) {
+              console.log('Contract Balance sub - from contract address to: ' + to);
+              currentContractBalance = currentContractBalance.sub(amount);
+            }
             this.staking[this.address] = {
               id: this.address,
-              OPTBalance: currentBalance,
+              WalletBalance: currentWalletBalance,
+              ContractBalance: currentContractBalance,
               staked: this.staking[this.address].staked,
               rewards: this.staking[this.address].rewards
             };
             this.stakingStore.upsert(this.address, this.staking[this.address]);
-            console.log('balance: ' + currentBalance.valueOf().toString());
+            console.log('wallet balance: ' + currentWalletBalance.valueOf().toString());
+            console.log('contract balance: ' + currentContractBalance.valueOf().toString());
           }
         }
       });
@@ -141,13 +162,15 @@ export class StakingService {
           // Unique identifier for log
           const id = log['transactionHash'].concat(log['logIndex']);
           console.log('id: ' + id);
-          if (!(id in this.balanceUpdates)){
+          if (!(id in this.balanceUpdates) && this.address in this.staking){
             this.balanceUpdates[id] = true;
             const amount = ethers.BigNumber.from(events['args'][1]);
+            console.log('staked: ' + this.staking[this.address].staked);
             // Update staked amount
             this.staking[this.address] = {
               id: this.address,
-              OPTBalance: this.staking[this.address].OPTBalance,
+              WalletBalance: this.staking[this.address].WalletBalance,
+              ContractBalance: this.staking[this.address].ContractBalance,
               staked: this.staking[this.address].staked.add(amount),
               rewards: this.staking[this.address].rewards
             };
@@ -198,7 +221,8 @@ export class StakingService {
       console.log('holdingsRaw: ' + holdingsRaw);
       this.staking[this.address] = {
         id: this.address,
-        OPTBalance: this.staking[this.address].OPTBalance,
+        WalletBalance: this.staking[this.address].WalletBalance,
+        ContractBalance: this.staking[this.address].ContractBalance,
         staked: ethers.BigNumber.from(holdingsRaw[0]),
         rewards: ethers.BigNumber.from(holdingsRaw[1]),
       };
@@ -231,9 +255,10 @@ export class StakingService {
 
     this.staking[this.address] = {
       id: this.address,
-      OPTBalance: 0,
-      staked: 0,
-      rewards: 0
+      WalletBalance: ethers.BigNumber.from('0'),
+      ContractBalance: ethers.BigNumber.from('0'),
+      staked: ethers.BigNumber.from('0'),
+      rewards: ethers.BigNumber.from('0'),
     };
 
     this.setupHoldingsSubscriber();

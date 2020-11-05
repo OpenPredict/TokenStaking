@@ -2,19 +2,19 @@
   <ion-toolbar class="padding015" color="secondary">
     <img class="logo" src="/assets/img/logo.svg" alt="">
     <ion-buttons slot="end">
+
       <button class="btn btn-unlock" *ngIf="!(loggedIn$ | async)" (click)="login()">
         <div class="btnInner">
            <img src="/assets/img/lock.svg" alt="" srcset="">
            <span>Unlock</span>                    
         </div>                  
-     </button>    
+      </button>    
 
-     <button class="btn btn-header btn-unlock" *ngIf="loggedIn$ | async" (click)="options()">
-      <div class="btnInner">
-        <crypto-address-display [address]="address"></crypto-address-display> <span>My Wallet</span>                    
-      </div>                  
-   </button>         
-     
+      <button class="btn btn-header btn-unlock" *ngIf="loggedIn$ | async" (click)="options()">
+        <div class="btnInner">
+          <crypto-address-display [address]="address"></crypto-address-display> <span>My Wallet</span>                    
+        </div>                  
+     </button>       
      
     </ion-buttons>      
   </ion-toolbar>
