@@ -36,6 +36,10 @@ html, body {
 .o-container {
     width: 900px;
     margin: 0 auto;
+    padding: 0 15px;
+    @media only screen and (max-width: 767px) {
+        width: 100%;
+    }      
 }
 
 .darkBox {
@@ -617,6 +621,9 @@ ion-checkbox {
 
 .deposit-modal {
     --height: auto;
+    @media only screen and (max-width: 767px) {
+        --width: 85%;
+    }    
     .modal-wrapper{
     //   width: 90vw;
       .ion-page {
