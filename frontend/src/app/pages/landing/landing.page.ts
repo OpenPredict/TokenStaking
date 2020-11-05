@@ -10,6 +10,7 @@ import { StakingService } from '@app/services/staking-service/staking.service';
 import { StakingQuery } from '@app/services/staking-service/staking.service.query';
 import { IStaking } from '@app/data-model';
 import { ethers } from 'ethers';
+import { BaseForm } from '@app/helpers/BaseForm';
 
 @Component({
   selector: 'app-landing',
@@ -62,11 +63,12 @@ export class LandingPage implements OnInit {
       await modal.present();
       const selection = await modal.onDidDismiss();
       if ( selection.data ) {
-        console.log(selection.data); // Do something with this Value i.e send it somewhere etc
+        const amount = BaseForm.transformAmount(selection.data);
+        console.log('amount:' + amount); // Do something with this Value i.e send it somewhere etc
 
         try {
           const interaction = await this.ui
-                                  .loading(  this.stakingService.deposit(selection.data),
+                                  .loading(  this.stakingService.deposit(amount),
                                   'You will be prompted for 2 contract interactions, please approve all to successfully stake, and please be patient as it may take a few moments to broadcast to the network.' )
                                   .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
           if (interaction) {

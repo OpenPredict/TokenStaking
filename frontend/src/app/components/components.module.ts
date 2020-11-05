@@ -10,7 +10,7 @@ import { DepositModalComponent } from '@components/deposit-modal/deposit-modal.c
 import { WalletSelectionModalComponent } from '@components/wallet-selection-modal/wallet-selection-modal.component';
 import { WalletOptionsModalComponent } from '@components/wallet-options-modal/wallet-options-modal.component';
 import { TextMaskModule } from 'angular2-text-mask';
-import { CryptoAddressDisplayComponent } from "@components/crypto-address-display/crypto-address-display.component";
+import { CryptoAddressDisplayComponent } from '@components/crypto-address-display/crypto-address-display.component';
 
 const components = [
   ConnectWallet,

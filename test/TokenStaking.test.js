@@ -1,20 +1,19 @@
 const OpenPredict = artifacts.require('OpenPredict');
 const TokenStaking = artifacts.require('TokenStaking');
 
+
 const assert = require("chai").assert;
 const truffleAssert = require('truffle-assertions');
 const { AssertionError } = require("chai");
 
 const ethers = require("ethers");
+const Utils = require('./../utils');
+const Constants = Utils.Constants
 
-const periodSeconds = 4;
-const depositPeriodEnd = 86400;
-const maxPeriods = depositPeriodEnd / periodSeconds;
-
-const minDeposit = '50';
-const contractLimit = '75000';
-const amountPerAddress = '100000';
+// test specific constants
 let creationTime = 0;
+amountPerAddress = '100000';
+contracts = []
 
 // Daily Percentage Return: 26% (APR) / 365 (days per year) / 100 (per single token).
 DPR = new ethers.BigNumber.from('39').mul(ethers.utils.parseUnits('.01')).div(new ethers.BigNumber.from('365'));
@@ -32,7 +31,6 @@ async function sendTokensToAddresses(contracts, accounts) {
 }
 
 contract("TokenStaking", async (accounts) => {
-    let contracts = []
 
     beforeEach( async () => {
         console.log('Creating contracts..')
@@ -41,20 +39,18 @@ contract("TokenStaking", async (accounts) => {
         contracts['TokenStaking'] = await TokenStaking.new(
             contracts['OpenPredict'].address,
             accounts[1],
-            periodSeconds,
-            depositPeriodEnd
+            Constants['test'].periodSeconds,
+            Constants['test'].depositPeriodEnd
         );
-
+    
         Object.keys(contracts).forEach((key) => {
             console.log(key + " address: " + contracts[key].address)
         })
 
         console.log('Funding reward pool..')
         const rewardPoolAmount = ethers.utils.parseUnits('1000000');
-        await contracts['OpenPredict'].transfer(accounts[1], rewardPoolAmount);
-        const balance = await contracts['OpenPredict'].balanceOf(accounts[1]);
-        assert.equal(balance.valueOf().toString(), rewardPoolAmount.valueOf().toString());
 
+        await contracts['OpenPredict'].transfer(accounts[1], rewardPoolAmount);
 
         console.log('Setting approval for all to contract for reward pool tokens..')
         await contracts['OpenPredict'].approve(contracts['TokenStaking'].address, ethers.constants.MaxUint256, {from: accounts[1]});
@@ -64,10 +60,10 @@ contract("TokenStaking", async (accounts) => {
         await sendTokensToAddresses(contracts, accounts);
     })
 
-    it.only("Should pass for test case A", async () => {
+    it("Should pass for test case A", async () => {
 
         console.log('accounts[2] approves TokenStaking for 50 OP..');
-        const amount = ethers.utils.parseUnits(minDeposit);
+        const amount = ethers.utils.parseUnits(Constants.minDeposit);
         console.log('attempt deposit without granting allowance..')
         await truffleAssert.reverts(
             contracts['TokenStaking'].deposit(amount, {from: accounts[2]}),
@@ -83,7 +79,7 @@ contract("TokenStaking", async (accounts) => {
         assert.equal(balance.valueOf().toString(), amount.valueOf().toString());
 
         console.log('wait for 2 periods..')
-        await new Promise(r => setTimeout(r, 2 * periodSeconds * 1000));
+        await new Promise(r => setTimeout(r, 2 * Constants['test'].periodSeconds * 1000));
 
         console.log('withdraw, check balance..');
         await contracts['TokenStaking'].withdraw({from: accounts[2]});
@@ -92,10 +88,10 @@ contract("TokenStaking", async (accounts) => {
         assert.equal(stakingPerAddress[0][2], true);
         newBalance = await contracts['OpenPredict'].balanceOf(accounts[2]);
         console.log('newBalance: ' + newBalance.valueOf().toString());
-        // Original Balance + DPR * minDeposit * 2
+        // Original Balance + DPR * Constants.minDeposit * 2
         expectedBalance = ethers.utils.parseUnits(amountPerAddress).add(
             DPR.mul(
-                ethers.BigNumber.from(2)).mul(ethers.BigNumber.from(minDeposit)
+                ethers.BigNumber.from(2)).mul(ethers.BigNumber.from(Constants.minDeposit)
             )
         );
         assert.equal(newBalance.valueOf().toString(), expectedBalance.valueOf().toString());
@@ -121,7 +117,7 @@ contract("TokenStaking", async (accounts) => {
         assert.equal(stakingPerAddress[2][2], false);
 
         console.log('wait for 2 more periods..')
-        await new Promise(r => setTimeout(r, periodSeconds * 2 * 1000));
+        await new Promise(r => setTimeout(r, Constants['test'].periodSeconds * 2 * 1000));
 
         await contracts['TokenStaking'].withdraw({from: accounts[2]});
         newBalance = await contracts['OpenPredict'].balanceOf(accounts[2]);
@@ -210,26 +206,26 @@ contract("TokenStaking", async (accounts) => {
         );
         
         console.log('valid deposit of min token amount..')
-        await contracts['TokenStaking'].deposit(ethers.utils.parseUnits(minDeposit), {from: accounts[2]}),
+        await contracts['TokenStaking'].deposit(ethers.utils.parseUnits(Constants.minDeposit), {from: accounts[2]}),
 
         console.log('attempt deposit maximum amount to contract, verify failure..');
         await truffleAssert.reverts(
-            contracts['TokenStaking'].deposit(ethers.utils.parseUnits(contractLimit), {from: accounts[2]}),
+            contracts['TokenStaking'].deposit(ethers.utils.parseUnits(Constants.contractLimit), {from: accounts[2]}),
             "TokenStaking: Contract balance with deposited amount exceeds deposit limit"
         );
     })
 
     // deposit for min amount
-    // calc amount up to depositPeriodEnd
-    // wait for depositPeriodEnd + 2 periods
-    // verify deposit faulure following depositPeriodEnd
+    // calc amount up to Constants['test'].depositPeriodEnd
+    // wait for Constants['test'].depositPeriodEnd + 2 periods
+    // verify deposit faulure following Constants['test'].depositPeriodEnd
     // verify correct rewards
     it("Should pass for test case B", async () => {
         console.log('Getting balance of accounts[2]..');
         const originalBalance = await contracts['OpenPredict'].balanceOf(accounts[2]);
 
         console.log('accounts[2] approves TokenStaking for 50 OP..');
-        const amount = ethers.utils.parseUnits(minDeposit);
+        const amount = ethers.utils.parseUnits(Constants.minDeposit);
         await contracts['OpenPredict'].approve(contracts['TokenStaking'].address, amount, {from: accounts[2]});
 
         console.log('call deposit..');
@@ -237,7 +233,7 @@ contract("TokenStaking", async (accounts) => {
         stakingPerAddress = await contracts['TokenStaking'].getStakingPerAddress({from: accounts[2]});
         const depositTime = stakingPerAddress[0][1];
         // get resulting rewards
-        const periods = Math.floor((depositPeriodEnd - (depositTime - creationTime)) / periodSeconds);
+        const periods = Math.floor((Constants['test'].depositPeriodEnd - (depositTime - creationTime)) / Constants['test'].periodSeconds);
         const rewards = DPR.mul(50).mul(periods);
         const originalBalanceWithRewards = ethers.BigNumber.from(originalBalance.valueOf().toString()).add(rewards);
         console.log('   originalBalance: ' + originalBalance.valueOf().toString());
@@ -245,11 +241,11 @@ contract("TokenStaking", async (accounts) => {
         console.log('originalBalanceWithRewards: ' + originalBalanceWithRewards.valueOf().toString());
 
         console.log('Awaiting til staking period end, plus a couple more periods..');
-        await new Promise(r => setTimeout(r, (depositPeriodEnd + (2 * periodSeconds)) * 1000));
+        await new Promise(r => setTimeout(r, (Constants['test'].depositPeriodEnd + (2 * Constants['test'].periodSeconds)) * 1000));
 
         console.log('attempt deposit following deposit period end, verify failure..');
         await truffleAssert.reverts(
-            contracts['TokenStaking'].deposit(ethers.utils.parseUnits(minDeposit), {from: accounts[2]}),
+            contracts['TokenStaking'].deposit(ethers.utils.parseUnits(Constants.minDeposit), {from: accounts[2]}),
             "TokenStaking: Deposit period ended"
         );
 
@@ -257,8 +253,8 @@ contract("TokenStaking", async (accounts) => {
         await contracts['TokenStaking'].withdraw({from: accounts[2]});
 
         console.log('verify rewards do not exceed staking period end..');
-        // balance following full depositPeriodEnd will be:
-        // originalBalance + (minDeposit(50) * DPR * maxPeriods(10))
+        // balance following full Constants['test'].depositPeriodEnd will be:
+        // originalBalance + (Constants.minDeposit(50) * DPR * maxPeriods(10))
         const balanceWithRewards = await contracts['OpenPredict'].balanceOf(accounts[2]);
         console.log('balanceWithRewards: ' + balanceWithRewards.valueOf().toString());
         assert.equal(balanceWithRewards.valueOf().toString(), originalBalanceWithRewards.valueOf().toString());
