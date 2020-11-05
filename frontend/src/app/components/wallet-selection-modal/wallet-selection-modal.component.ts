@@ -24,7 +24,6 @@ export class WalletSelectionModalComponent implements OnInit {
     this.auth.logout();
     const wallet: any = await this.crypto.activeSigner();
     if (wallet && wallet.hasOwnProperty('wallet') && wallet.hasOwnProperty('signer')) {
-      console.log('loggin in son');
       this.auth.login(wallet.wallet, wallet.signer);
     }
     this.modalCtrl.dismiss();
