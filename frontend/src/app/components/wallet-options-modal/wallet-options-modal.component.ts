@@ -12,30 +12,30 @@ import { Observable } from 'rxjs';
 export class WalletOptionsModalComponent implements OnInit {
 
   // wallet$: Observable<string> = this.authQuery.select( user => user.wallet )
-  wallet: any 
-  
+  wallet: any;
+
   constructor(
     public modalCtrl: ModalController,
     public authService: AuthService,
     public authQuery: AuthQuery ) { }
 
   ngOnInit() {
-    this.wallet = this.authQuery.getValue()
+    this.wallet = this.authQuery.getValue();
   }
-  
+
   async openEtherscan(wallet: string) {
-    window.open(`https://etherscan.io/address/${wallet}`, "_blank");
-    await this.modalCtrl.dismiss()
-  }  
-  
+    window.open(`https://etherscan.io/address/${wallet}`, '_blank');
+    await this.modalCtrl.dismiss();
+  }
+
   async logout(wallet: string) {
-    this.authService.logout()
-    await this.modalCtrl.dismiss()
-  }    
-  
-  
+    this.authService.logout();
+    await this.modalCtrl.dismiss();
+  }
+
+
   async cancel() {
-    await this.modalCtrl.dismiss()
+    await this.modalCtrl.dismiss();
   }
 
 }

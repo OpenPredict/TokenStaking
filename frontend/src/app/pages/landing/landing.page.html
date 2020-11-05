@@ -17,13 +17,18 @@
          </div>
 
          <div class="rewardStatus__item">
-            <div class="rewardStatus__label">Reward frequency</div>  
+            <div class="rewardStatus__label">Reward Frequency</div>  
             <div class="rewardStatus__value">24h</div>                         
          </div>
 
          <div class="rewardStatus__item">
             <div class="rewardStatus__label">APR</div>  
             <div class="rewardStatus__value">39%</div>                         
+         </div>
+
+         <div class="rewardStatus__item" *ngIf="(stakingData$ | async) as stakingData">
+            <div class="rewardStatus__label">Total Staked</div>  
+            <div class="rewardStatus__value">{{ parseAmount(stakingData.ContractBalance) }} OPT</div>                         
          </div>
 
       </div>

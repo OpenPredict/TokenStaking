@@ -53,9 +53,9 @@ export class AppComponent {
 
   async initialize() {
     const wallet: any = await this.crypto.activeSigner();
-    if(wallet.hasOwnProperty('wallet') && wallet.hasOwnProperty('signer')) {
+    if (wallet.hasOwnProperty('wallet') && wallet.hasOwnProperty('signer')) {
       this._auth.login(wallet.wallet, wallet.signer);
-      console.log(`accounts changed..... ${wallet.wallet}`)
+      console.log(`accounts changed..... ${wallet.wallet}`);
       await this.stakingService.setupSubscribers();
       this.navCtrl.navigateForward('/landing');
     }

@@ -27,7 +27,8 @@ export interface LedgerWallet {
 
 export interface IStaking {
   id?: ID;
-  OPTBalance?: ethers.BigNumber;
+  WalletBalance?: ethers.BigNumber;
+  ContractBalance?: ethers.BigNumber;
   staked?: ethers.BigNumber;
   rewards?: ethers.BigNumber;
 }

@@ -10,7 +10,7 @@
     <li>
       <label position="stacked">
         <div class="standardInputLabel" *ngIf="(stakingData$ | async) as stakingData">
-          Available to stake: {{ parseAmount(stakingData.OPTBalance) }}
+          Available to stake: {{ parseAmount(stakingData.WalletBalance) }}
         </div>
       </label>
       <input class="standardInput" type="text" min="0" formControlName="amount" placeholder="0.00" [textMask]="{mask: tokenMask }" />
