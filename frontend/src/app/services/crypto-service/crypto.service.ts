@@ -5,6 +5,8 @@ import Transport from '@ledgerhq/hw-transport-webusb';
 import { Wallet, ethers } from 'ethers';
 import AppEth from '@ledgerhq/hw-app-eth';
 
+import { Storage } from '@ionic/storage';
+
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/map';
 import { AuthService } from '../auth-service/auth.service';
@@ -24,16 +26,23 @@ export class CryptoService {
 
   constructor(
     public router: Router,
-    // public _auth: AuthService,
-    ) {}
+    private storage: Storage) {}
 
-  netChange() {
-    // const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-    // provider.on("network", (newNetwork, oldNetwork) => {
-    //     if (oldNetwork) {
-    //         window.location.reload();
-    //     }
-    // });
+    
+  async setNetwork() { 
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const currentNetwork = await provider.getNetwork()
+    this.storage.set("chainId", currentNetwork.chainId);
+  }
+    
+  async netChange() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const lastChainId = await this.storage.get("chainId");
+    provider.on("network", (newNetwork) => {
+        if (String(newNetwork.chainId) !== String(lastChainId)) {
+          window.location.reload();
+        }        
+    });
   }
 
 
