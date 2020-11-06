@@ -3,12 +3,21 @@
 }
 
 .logo {
-    width: 300px;    
+    width: 150px;    
 }
 
 .btn-header {
     width: auto;
-    padding: 9px 15px;
+    padding: 9px 15px;     
+    @media only screen and (max-width: 767px) {
+        font-size: 9px!important;
+        padding: 7px;    
+    }      
+    span {
+        @media only screen and (max-width: 767px) {
+            font-size: 11px!important;
+        }         
+    }
     
     .btnInner {
         justify-content: space-between;
