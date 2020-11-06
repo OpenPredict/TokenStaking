@@ -29,7 +29,7 @@ contract TokenStaking is Pausable {
   uint depositLimit = 75000000000000000000000;
   uint minimumDeposit = 50 * 1 ether;
   uint secsDepositTime = 7776000; // 90 days in seconds
-  uint secsDaily;
+  uint secsDaily = 86400; // 1 day in seconds
   uint depositPeriodEnd;
   uint depositPeriodStart;
 
@@ -56,13 +56,13 @@ contract TokenStaking is Pausable {
             "TokenStaking: Deposit period ended");
   }
 
-  constructor(address _OpenPredictToken, address _RewardPool, uint _secsDaily, uint _secsDepositTime) public {
+  constructor(address _OpenPredictToken, address _RewardPool, uint _secsDepositTime, uint _secsDaily) public {
     OpenPredictToken = _OpenPredictToken;
     RewardPool = _RewardPool;
-    secsDaily = _secsDaily;
-    secsDepositTime = _secsDepositTime;
     depositPeriodStart = block.timestamp;
     depositPeriodEnd = block.timestamp + secsDepositTime;
+    secsDepositTime = _secsDepositTime;
+    secsDaily = _secsDaily;
     DPR = (APR * 10**16) / numDaysPerYear; // ((APR / 100) * 10^18) / 365
     owner = msg.sender;
   }
