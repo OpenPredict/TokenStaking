@@ -11,19 +11,21 @@
       </p>      
       <div class="rewardStatus">
          
-         <div class="rewardStatus__item">
-            <div class="rewardStatus__label">Minimum Deposit</div>  
-            <div class="rewardStatus__value">50 OPT</div>                         
-         </div>
-
-         <div class="rewardStatus__item">
-            <div class="rewardStatus__label">Reward Frequency</div>  
-            <div class="rewardStatus__value">24h</div>                         
-         </div>
-
-         <div class="rewardStatus__item">
-            <div class="rewardStatus__label">APR</div>  
-            <div class="rewardStatus__value">39%</div>                         
+         <div class="rewardStatusData">
+            <div class="rewardStatus__item">
+               <div class="rewardStatus__label">Minimum Deposit</div>  
+               <div class="rewardStatus__value">50 OPT</div>                         
+            </div>
+   
+            <div class="rewardStatus__item">
+               <div class="rewardStatus__label">Reward Frequency</div>  
+               <div class="rewardStatus__value">24h</div>                         
+            </div>
+   
+            <div class="rewardStatus__item">
+               <div class="rewardStatus__label">APR</div>  
+               <div class="rewardStatus__value">39%</div>                         
+            </div>            
          </div>
 
          <div class="rewardStatus__item" *ngIf="(stakingData$ | async) as stakingData">
