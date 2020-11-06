@@ -20,7 +20,7 @@ import { BaseForm } from '@app/helpers/BaseForm';
 export class LandingPage implements OnInit {
 
   loggedIn$: Observable<boolean> = this.authQuery.select( user => !!user.wallet );
-  stakingData$ = this.stakingQuery.selectEntity(this.stakingService.address);
+  stakingData$ = this.stakingQuery.select();
 
   constructor(
     public modalCtrl: ModalController,
@@ -119,6 +119,23 @@ export class LandingPage implements OnInit {
 // *************** Messages *********************
 
 // ************** helper functions ***************
+  getStaked(stakingData){
+    return stakingData.entities[this.stakingService.address] !== undefined
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].staked)
+      : 0.0;
+  }
+
+  getRewards(stakingData){
+    return stakingData.entities[this.stakingService.address] !== undefined
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].rewards)
+      : 0.0;
+  }
+
+  getContractBalance(stakingData){
+    return stakingData.entities[this.stakingService.address] !== undefined
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].ContractBalance)
+      : 0.0;
+  }
 
   hasRewards(rewards) {
     return (isNaN(rewards)) ? false : (rewards > 0);
