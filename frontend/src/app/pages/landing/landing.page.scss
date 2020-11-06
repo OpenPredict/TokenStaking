@@ -25,12 +25,20 @@ p {
 }
 
 .rewardStatus {
-    display: flex;
+
     border: 1px solid #89F4ED;
     border-radius: 20px;
-    justify-content: space-between;
+
     padding: 20px 0px;
     margin: 30px auto;
+    
+    
+    .rewardStatusData {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    
     .rewardStatus__item {
         flex: 1;
         .rewardStatus__label {
