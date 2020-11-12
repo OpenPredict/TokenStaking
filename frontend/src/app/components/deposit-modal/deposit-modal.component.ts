@@ -34,7 +34,11 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
       amount: [null, Validators.compose([Validators.required])],
     });
 
-    this.form.get('amount').setValidators([CustomValidators.minimumNumber(50)]);
+    this.stakingData$.subscribe( stakingData => {
+      console.log('stakingData updated:' + JSON.stringify(stakingData));
+      this.form.get('amount').setValidators(
+        [ CustomValidators.numberRange(50, parseFloat(this.parseAmount(stakingData.WalletBalance)) )]);
+    });
   }
 
   ngOnInit() {}
@@ -48,8 +52,8 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
     this.modalCtrl.dismiss( amount );
   }
 
-  parseAmount(amount) {
-    return (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
+  parseAmount(amount: any): string {
+    return (isNaN(amount)) ? '0.0' : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
   }
 
 

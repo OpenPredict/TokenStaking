@@ -32,7 +32,9 @@ export class LandingPage implements OnInit {
     public ui: UiService, ) {}
 
   ngOnInit() {
-    this.stakingData$.subscribe( res => console.log('stakingData updated:' + JSON.stringify(res)) );
+    this.stakingData$.subscribe( stakingData => {
+      console.log('stakingData updated:' + JSON.stringify(stakingData));
+    });
   }
 
   // ***************** Buttons *****************

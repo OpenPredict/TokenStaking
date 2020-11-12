@@ -98,7 +98,7 @@ export abstract class BaseForm implements OnInit {
      * @param {number} value
      */
     static transformAmount(value){
-        return (value==null) ? 0 : parseFloat(value.replace('$', '').replace(',', ''));
+        return (value==null) ? 0 : parseFloat(value.replace('$', '').replace(/,/g, ''));
       }
 
     static dollarMask = createNumberMask({
