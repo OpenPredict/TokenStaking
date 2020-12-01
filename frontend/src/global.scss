@@ -77,6 +77,26 @@ ion-header {
     } 
 }
 
+.opHeader {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 29px;
+    color: #89F4ED;  
+    &.opHeader__light {
+        font-weight: 300;        
+    }  
+}
+
+
+
+p {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 17px;
+    color: #A6AEBE;        
+}
 
 
 
@@ -724,3 +744,104 @@ h2.modalHeader {
     color: #89F4ED;    
 }
   
+
+
+
+
+
+
+
+
+
+
+.m-center {
+    margin: 0 auto;    
+}
+.m-none {
+    margin: 0;    
+}
+.m-b-none {
+    margin-bottom: 0;    
+}
+
+.chevron {
+    background: url(/assets/img/chevron.svg);
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+}
+
+
+.o-container {
+    width: 560px;
+    margin: 80px auto 50px;
+    text-align: center;
+    @media only screen and (max-width: 767px) {
+        width: 100%;
+    }      
+}
+
+.rewardStatus {
+    border: 1px solid #89F4ED;
+    border-radius: 20px;
+    padding: 20px 0px;
+    margin: 30px auto;
+    .rewardStatusData {
+        display: flex;
+        justify-content: space-between;
+        &:not(.nodata) {
+            margin-bottom: 20px;   
+        }
+    }
+    .rewardStatus__item {
+        flex: 1;
+        .rewardStatus__label {
+            // font-family: Montserrat;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 17px;
+            color: #A6AEBE;      
+        }
+        .rewardStatus__value {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 24px;
+            line-height: 29px;
+            color: #89F4ED;  
+            align-items: center;
+            display: inline-flex;      
+        }        
+    }
+}
+
+
+.harvest {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px; 
+    .harvest__item {
+        .harvest__value {
+            // font-family: Montserrat;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 24px;
+            line-height: 29px;
+            color: #FFFFFF;            
+        }
+        .harvest__label {
+            // font-family: Montserrat;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 17px;
+            color: #A6AEBE;    
+            margin: 10px auto 25px;              
+        }   
+    }
+}
+
+
+
