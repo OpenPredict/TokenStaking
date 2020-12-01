@@ -11,6 +11,8 @@ import { WalletSelectionModalComponent } from '@components/wallet-selection-moda
 import { WalletOptionsModalComponent } from '@components/wallet-options-modal/wallet-options-modal.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { CryptoAddressDisplayComponent } from '@components/crypto-address-display/crypto-address-display.component';
+import { FarmingOptionComponent } from "@components/farming-option/farming-option.component";
+
 
 const components = [
   ConnectWallet,
@@ -19,6 +21,7 @@ const components = [
   WalletSelectionModalComponent,
   WalletOptionsModalComponent,
   CryptoAddressDisplayComponent,
+  FarmingOptionComponent,
 ];
 
 @NgModule({
