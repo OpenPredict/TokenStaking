@@ -8,9 +8,10 @@
       </h1>
       <p>
         Deposit OPT-USDC-LP and earn OPT
-      </p>     
+      </p>   
+      
+      
       <div class="rewardStatus">
-         
         <div class="rewardStatusData nodata">
           <div class="rewardStatus__item">
              <div class="rewardStatus__label">Est. APY</div>  
@@ -31,23 +32,73 @@
                </div>                         
           </div>            
        </div>
-
+       
+       <div class="harvest">
+         <div class="harvest__item m-center">
+            <div class="harvest__value">
+               0.00000
+            </div>   
+            <div class="harvest__label">
+               OPT-USDC-LP deposited
+            </div>      
+            <button (click)="addLiquidity()" class="btn btn-unlock">
+               <div class="btnInner">
+                  <span>Add Liquidity</span>                     
+               </div>
+            </button>                             
+         </div> 
+      </div>       
       </div>
-         <div class="harvest">
-            <div class="harvest__item m-center">
-               <div class="harvest__value">
-                  0.00000
-               </div>   
-               <div class="harvest__label">
-                OPT-USDC-LP deposited
-               </div>      
-               <button (click)="addLiquidity()" class="btn btn-unlock">
-                  <div class="btnInner">
-                     <span>Add Liquidity</span>                     
-                  </div>
-               </button>                             
-            </div> 
+
          
-         </div>
+      
+      
+      <div class="rewardStatus">
+         <div class="rewardStatusData nodata">
+           <div class="rewardStatus__item">
+              <div class="rewardStatus__label">Est. APY</div>  
+              <div class="rewardStatus__value">10%</div>                         
+           </div>
+           <div class="rewardStatus__item">
+              <div class="rewardStatus__label">OPT-USDC pair</div>  
+              <div (click)="openURL('https://daomaker.com')"
+                   class="rewardStatus__value" >
+                   Info <div class="chevron"></div>
+                </div>                         
+           </div>
+           <div class="rewardStatus__item">
+              <div class="rewardStatus__label">Providing liquidity</div>  
+              <div (click)="openURL('https://daomaker.com')"
+                   class="rewardStatus__value">
+                   Guide <div class="chevron"></div>
+                </div>                         
+           </div>            
+        </div>
+        
+        <div class="harvest">
+          <div class="harvest__item m-center">
+             <div class="harvest__value">
+                0.00000
+             </div>   
+             <div class="harvest__label">
+                OPT-USDC-LP deposited
+             </div>      
+             <button (click)="addLiquidity()" class="btn btn-unlock">
+                <div class="btnInner">
+                   <span>Add Liquidity</span>                     
+                </div>
+             </button>                             
+          </div> 
+       </div>       
+       </div>      
+      
+      
+      
+         <div class="back__button" (click)="goBack()">
+            <div class="back__button--icon"></div>
+            <span>Go back</span>
+          </div>             
+         
+         
       </div>
  </ion-content>

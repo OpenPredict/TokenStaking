@@ -17,7 +17,7 @@ const routes: Routes = [
   {
     path: 'otp-staking',
     canActivate : [WalletGuard],
-    loadChildren: () => import('./pages/landing/landing.module').then( m => m.LandingPageModule)
+    loadChildren: () => import('./pages/otp-staking/otp-staking.module').then( m => m.OtpStakingPageModule)
   },
   {
     path: 'landing',

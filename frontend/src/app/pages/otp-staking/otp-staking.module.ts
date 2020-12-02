@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { LandingPage } from './landing.page';
+import { OtpStakingPage } from './otp-staking.page';
 
-import { LandingPageRoutingModule } from './landing-routing.module';
+import { OtpStakingPageRoutingModule } from './otp-staking-routing.module';
 import { SharedModule } from '@app/shared.module';
 
 @NgModule({
@@ -12,9 +12,9 @@ import { SharedModule } from '@app/shared.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    LandingPageRoutingModule,
+    OtpStakingPageRoutingModule,
     SharedModule,
   ],
-  declarations: [LandingPage]
+  declarations: [OtpStakingPage]
 })
-export class LandingPageModule {}
+export class OtpStakingPageModule {}
