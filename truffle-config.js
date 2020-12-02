@@ -46,14 +46,14 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 8545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
-      secret : process.env.MNEMONIC
+      secret : 'myth like bonus scare over problem client lizard pioneer submit female collect' // ganache-cli --mnemonic -d
      },
 
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
-     secret : process.env.MNEMONIC
+     secret : 'myth like bonus scare over problem client lizard pioneer submit female collect' // ganache-cli --mnemonic -d
     },
     kovan: {
       provider: new HDWalletProvider(PRIVATE_KEY, "https://kovan.infura.io/v3/" + INFURA_KEY),

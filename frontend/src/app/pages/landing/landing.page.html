@@ -24,13 +24,13 @@
    
             <div class="rewardStatus__item">
                <div class="rewardStatus__label">APR</div>  
-               <div class="rewardStatus__value">39%</div>                         
+               <div class="rewardStatus__value">8.5%</div>                         
             </div>            
          </div>
 
          <div class="rewardStatus__item" *ngIf="(stakingData$ | async) as stakingData">
             <div class="rewardStatus__label">Total Staked</div>  
-            <div class="rewardStatus__value">{{ getContractBalance(stakingData) }} / 75000 OPT</div>                         
+            <div class="rewardStatus__value">{{ getContractBalance(stakingData) }} / 35000 OPT</div>                         
          </div>
 
       </div>

@@ -3,13 +3,13 @@
 
 Minimum Deposit: `50 OP tokens`
 
-APR: `39%`
+APR: `8.5%`
 
 Reward Frequency: `24 hours`
 
 Contract Running Time: `90 days`
 
-Contract Maximum Holdings: `75k OP tokens`
+Contract Maximum Holdings: `35k OP tokens`
 
 # Contract Interface
 
@@ -31,7 +31,7 @@ Withdraw initial deposit(s), plus any staking rewards.
 
 ### Run blockchain
 
-`ganache-cli --mnemonic "$(./dotenv get MNEMONIC)"`
+`ganache-cli --mnemonic -d`
 
 ### Migrate contracts
 
