@@ -7,8 +7,8 @@ const OpenPredict  = require('./../build/contracts/OpenPredict.json');
 const TokenStaking = require('./../build/contracts/TokenStaking.json');
 const contracts = [];
 const contractAddresses = [];
-contractAddresses['OpenPredict'] = '0xBf610614CaA08d9fe7a4F61082cc32951e547a91';
-contractAddresses['TokenStaking'] = '0x4C6f9E62b4EDB743608757D9D5F16B0B67B41285';
+contractAddresses['OpenPredict'] = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
+contractAddresses['TokenStaking'] = '0x5b1869D9A4C187F2EAa108f3062412ecf0526b24';
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);

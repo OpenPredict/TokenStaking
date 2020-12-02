@@ -15,9 +15,6 @@ let creationTime = 0;
 amountPerAddress = '100000';
 contracts = []
 
-// Daily Percentage Return: 26% (APR) / 365 (days per year) / 100 (per single token).
-DPR = new ethers.BigNumber.from('39').mul(ethers.utils.parseUnits('.01')).div(new ethers.BigNumber.from('365'));
-
 async function sendTokensToAddresses(contracts, accounts) {
     // send enough OpenPredict for 100000 tokens per account
     const range = (account,index) => index >= 2;
@@ -39,8 +36,8 @@ contract("TokenStaking", async (accounts) => {
         contracts['TokenStaking'] = await TokenStaking.new(
             contracts['OpenPredict'].address,
             accounts[1],
-            Constants['test'].periodSeconds,
-            Constants['test'].depositPeriodEnd
+            Constants['test'].depositPeriodEnd,
+            Constants['test'].periodSeconds
         );
     
         Object.keys(contracts).forEach((key) => {
@@ -90,8 +87,9 @@ contract("TokenStaking", async (accounts) => {
         console.log('newBalance: ' + newBalance.valueOf().toString());
         // Original Balance + DPR * Constants.minDeposit * 2
         expectedBalance = ethers.utils.parseUnits(amountPerAddress).add(
-            DPR.mul(
-                ethers.BigNumber.from(2)).mul(ethers.BigNumber.from(Constants.minDeposit)
+            Constants.DPR.mul(
+                ethers.BigNumber.from(2)).mul(
+                    ethers.BigNumber.from(Constants.minDeposit)
             )
         );
         assert.equal(newBalance.valueOf().toString(), expectedBalance.valueOf().toString());
@@ -122,7 +120,7 @@ contract("TokenStaking", async (accounts) => {
         await contracts['TokenStaking'].withdraw({from: accounts[2]});
         newBalance = await contracts['OpenPredict'].balanceOf(accounts[2]);
         expectedBalance = expectedBalance.add(
-            DPR.mul(
+            Constants.DPR.mul(
                 ethers.BigNumber.from(2)).mul(ethers.BigNumber.from(numTokens).mul(ethers.BigNumber.from('2'))
             )
         );
@@ -234,7 +232,7 @@ contract("TokenStaking", async (accounts) => {
         const depositTime = stakingPerAddress[0][1];
         // get resulting rewards
         const periods = Math.floor((Constants['test'].depositPeriodEnd - (depositTime - creationTime)) / Constants['test'].periodSeconds);
-        const rewards = DPR.mul(50).mul(periods);
+        const rewards = Constants.DPR.mul(50).mul(periods);
         const originalBalanceWithRewards = ethers.BigNumber.from(originalBalance.valueOf().toString()).add(rewards);
         console.log('   originalBalance: ' + originalBalance.valueOf().toString());
         console.log('rewards: ' + rewards.valueOf().toString());

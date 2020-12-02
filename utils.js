@@ -17,12 +17,13 @@ module.exports = {
         },
         'test' : {
             provider : new ethers.providers.JsonRpcProvider("http://" + truffleConfig.networks.development.host + ":" + truffleConfig.networks.development.port.toString()),
-            secret: truffleConfig.networks.development.secret,
+            secret: truffleConfig.networks.test.secret,
             periodSeconds : 4,
             depositPeriodEnd : 20,
         },
         minDeposit : '50',
-        contractLimit : '75000',
+        contractLimit : '35000',
+        DPR : new ethers.BigNumber.from('85').mul(ethers.utils.parseUnits('.001')).div(new ethers.BigNumber.from('365')) // Daily Percentage Return: 8.5% (APR) / 365 (days per year) / 100 (per single token).
     },
 
     getNextContractAddress: function (address, nonce){

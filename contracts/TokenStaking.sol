@@ -21,13 +21,13 @@ contract TokenStaking is Pausable {
   address public owner;
   address OpenPredictToken;
   address RewardPool;
-  uint APR = 39;
+  uint APR = 85 * (10**15); // 8.5% ((85 / 1000) * 10^18)
   uint numDaysPerYear = 365;
-  // Daily Percentage Return per token: 0.39 (APR)/365 (number of days in a year) expressed in wei
+  // Daily Percentage Return per token: 8.5% (APR)/365 (number of days in a year) expressed in wei
   uint DPR;
-  // contract limit: 75k OP
-  uint depositLimit = 75000000000000000000000;
-  uint minimumDeposit = 50 * 1 ether;
+  // contract limit: 35k OP
+  uint depositLimit   = 35000 * (10**18);
+  uint minimumDeposit =    50 * (10**18);
   uint secsDepositTime = 7776000; // 90 days in seconds
   uint secsDaily = 86400; // 1 day in seconds
   uint depositPeriodEnd;
@@ -59,11 +59,12 @@ contract TokenStaking is Pausable {
   constructor(address _OpenPredictToken, address _RewardPool, uint _secsDepositTime, uint _secsDaily) public {
     OpenPredictToken = _OpenPredictToken;
     RewardPool = _RewardPool;
-    depositPeriodStart = block.timestamp;
-    depositPeriodEnd = block.timestamp + secsDepositTime;
     secsDepositTime = _secsDepositTime;
     secsDaily = _secsDaily;
-    DPR = (APR * 10**16) / numDaysPerYear; // ((APR / 100) * 10^18) / 365
+
+    depositPeriodStart = block.timestamp;
+    depositPeriodEnd = block.timestamp + secsDepositTime;
+    DPR = APR / numDaysPerYear; // APR / 365
     owner = msg.sender;
   }
 
