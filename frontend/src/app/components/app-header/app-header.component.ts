@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { WalletSelectionModalComponent } from '../wallet-selection-modal/wallet-selection-modal.component';
 import { WalletOptionsModalComponent } from '@components/wallet-options-modal/wallet-options-modal.component';
+import { CryptoService } from '@app/services/crypto-service/crypto.service';
 
 @Component({
   selector: 'app-app-header',
@@ -14,14 +15,17 @@ export class AppHeaderComponent implements OnInit {
 
   loggedIn$: Observable<boolean> = this.authQuery.select( user => !!user.wallet );
   address: string;
+  network: string
 
   constructor(
     private cd: ChangeDetectorRef,
     private zone: NgZone,
+    private crypto: CryptoService,
     public modalCtrl: ModalController,
     public authQuery: AuthQuery ) { }
 
     ngOnInit() {
+      this.crypto.$currentNetwork.subscribe( networkName => this.network = networkName )
       this.authQuery.select( user => user.wallet ).subscribe( res => {
         this.zone.run(() => {
           this.address = res;
