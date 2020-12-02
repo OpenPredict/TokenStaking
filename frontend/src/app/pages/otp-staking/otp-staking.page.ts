@@ -13,11 +13,11 @@ import { ethers } from 'ethers';
 import { BaseForm } from '@app/helpers/BaseForm';
 
 @Component({
-  selector: 'app-landing',
-  templateUrl: 'landing.page.html',
-  styleUrls: ['landing.page.scss'],
+  selector: 'app-otp-staking',
+  templateUrl: 'otp-staking.page.html',
+  styleUrls: ['otp-staking.page.scss'],
 })
-export class LandingPage implements OnInit {
+export class OtpStakingPage implements OnInit {
 
   loggedIn$: Observable<boolean> = this.authQuery.select( user => !!user.wallet );
   stakingData$ = this.stakingQuery.select();
@@ -147,4 +147,8 @@ export class LandingPage implements OnInit {
     return (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
   }
 
+  goBack() {
+    this.navCtrl.back();
+  }      
+  
 }
