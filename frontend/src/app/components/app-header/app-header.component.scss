@@ -26,3 +26,27 @@
     }
     
 }
+
+
+// .btn-header {
+//     width: auto;
+//     padding: 9px 15px;
+
+//     .btnInner {
+//         justify-content: space-between;
+//         align-items: center;
+//         font-weight: bold;
+//     }
+// }
+
+
+.activeNetwork {
+    background-color: black;
+    color: #89F4ED;
+    border-radius: 12px;
+    padding: 5px 15px;
+    margin-right: 9px;
+    font-weight: bold;
+    box-shadow: -10px -10px 15px -5px #2A3958, 10px 10px 15px -5px rgba(0, 0, 0, 0.25);
+    text-transform: capitalize;
+}

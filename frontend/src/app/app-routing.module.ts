@@ -7,8 +7,7 @@ import { WalletGuard } from './wallet.guard';
 const routes: Routes = [
   {
     path: '',
-    // redirectTo: 'connect-wallet',
-    redirectTo: 'staking',
+    redirectTo: 'connect-wallet',
     pathMatch: 'full'
   },
   {

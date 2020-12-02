@@ -9,7 +9,9 @@ import { Storage } from '@ionic/storage';
 
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/map';
-import { AuthService } from '../auth-service/auth.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+// import { AuthService } from '../auth-service/auth.service';
+
 
 const rlp = require('rlp');
 const keccak = require('keccak');
@@ -23,7 +25,10 @@ export class CryptoService {
   wallet: Wallet;
   maxDecimals = 18;
   _provider = null;
-
+  
+	private _currentNetwork = new BehaviorSubject<string>("")
+		    	$currentNetwork: Observable<Readonly<string>> = this._currentNetwork.asObservable()  
+  
   constructor(
     public router: Router,
     private storage: Storage) {}
@@ -33,6 +38,8 @@ export class CryptoService {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const currentNetwork = await provider.getNetwork()
     this.storage.set("chainId", currentNetwork.chainId);
+    this.storage.set("chainName", currentNetwork.name);    
+    this._currentNetwork.next(currentNetwork.name)
   }
     
   async netChange() {

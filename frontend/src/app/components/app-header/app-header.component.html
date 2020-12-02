@@ -9,7 +9,9 @@
            <span>Unlock</span>                    
         </div>                  
       </button>    
-
+      <div class="btnInner activeNetwork" *ngIf="network && loggedIn$ | async">
+        {{ network }}                    
+       </div>   
       <button class="btn btn-header btn-unlock" *ngIf="loggedIn$ | async" (click)="options()">
         <div class="btnInner">
           <crypto-address-display [address]="address"></crypto-address-display> <span>My Wallet</span>                    
