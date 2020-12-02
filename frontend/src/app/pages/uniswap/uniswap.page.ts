@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-uniswap',
@@ -7,9 +8,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UniswapPage implements OnInit {
 
-  constructor() { }
+  constructor( public navCtrl: NavController ) { }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  openURL(url : string ) {
+    window.open(url, '_blank');
+  }  
+  
+  addLiquidity() {
+    alert(`Add some liquid....`)
   }
 
+  goBack() {
+    this.navCtrl.back();
+  }    
+  
 }

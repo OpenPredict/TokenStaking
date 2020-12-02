@@ -19,5 +19,9 @@ export class StakingPage implements OnInit {
     this.navCtrl.navigateForward(`/${url}`)
     
   }
+  
+  goBack() {
+    this.navCtrl.back();
+  }    
 
 }
