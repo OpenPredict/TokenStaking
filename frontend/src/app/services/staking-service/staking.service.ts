@@ -15,8 +15,6 @@ import { ethers } from 'ethers';
 const OpenPredict  = require('@truffle/build/contracts/OpenPredict.json');
 const TokenStaking = require('@truffle/build/contracts/TokenStaking.json');
 const contractAddresses = [];
-contractAddresses['OpenPredict'] = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
-contractAddresses['TokenStaking'] = '0x5b1869D9A4C187F2EAa108f3062412ecf0526b24';
 
 export const options: any[] = [];
 
@@ -40,7 +38,23 @@ export class StakingService {
     private stakingStore: StakingStore,
     public navCtrl: NavController,
     public toastCtrl: ToastController,
-    public ui: UiService) {}
+    public ui: UiService) {
+      this.crypto.$currentNetwork.subscribe( (networkName) => {
+        console.log('network: ' + networkName);
+        if (networkName === 'homestead'){ // mainnet
+          contractAddresses['OpenPredict']  = '0x4fe5851c9af07df9e5ad8217afae1ea72737ebda';
+          contractAddresses['TokenStaking'] = '';
+        }
+        if (networkName === 'kovan'){
+          contractAddresses['OpenPredict']  = '0x44c55E45956503c7C097b622Cd21e209161C8e63';
+          contractAddresses['TokenStaking'] = '0x9c16EfFE9aF5Fd06dE88C3fC6517CFbBe1A6C10e';
+        }
+        if (networkName === 'unknown'){ // localhost
+          contractAddresses['OpenPredict']  = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
+          contractAddresses['TokenStaking'] = '0x5b1869D9A4C187F2EAa108f3062412ecf0526b24';
+        }
+      });
+    }
 
     get(): Observable<void> {
       const request = timer(500).pipe(
