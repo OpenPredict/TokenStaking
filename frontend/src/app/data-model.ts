@@ -32,3 +32,10 @@ export interface IStaking {
   staked?: ethers.BigNumber;
   rewards?: ethers.BigNumber;
 }
+
+export interface ILPTokens {
+  id?: ID;
+  OPTETH: ethers.BigNumber;
+  OPTUSDT: ethers.BigNumber;
+  OPTUSDC: ethers.BigNumber;
+}
