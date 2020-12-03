@@ -14,14 +14,14 @@ export class StakingPage implements OnInit {
 
   ngOnInit() {
   }
-  
+
   open(url: string) {
-    this.navCtrl.navigateForward(`/${url}`)
-    
+    this.navCtrl.navigateForward(`/${url}`);
+
   }
-  
+
   goBack() {
     this.navCtrl.back();
-  }    
+  }
 
 }

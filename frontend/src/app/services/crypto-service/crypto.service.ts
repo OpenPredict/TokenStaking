@@ -22,33 +22,33 @@ const keccak = require('keccak');
 export class CryptoService {
 
   private activeDerivation = `m/44'/60'/0'/0/0`;
-  wallet: Wallet;
+  address: string;
   maxDecimals = 18;
   _provider = null;
-  
-	private _currentNetwork = new BehaviorSubject<string>("")
-		    	$currentNetwork: Observable<Readonly<string>> = this._currentNetwork.asObservable()  
-  
+
+  private _currentNetwork = new BehaviorSubject<string>('');
+  $currentNetwork: Observable<Readonly<string>> = this._currentNetwork.asObservable()
+
   constructor(
     public router: Router,
     private storage: Storage) {}
 
-    
-  async setNetwork() { 
-    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-    const currentNetwork = await provider.getNetwork()
-    this.storage.set("chainId", currentNetwork.chainId);
-    this.storage.set("chainName", currentNetwork.name);    
-    this._currentNetwork.next(currentNetwork.name)
+
+  async setNetwork() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+    const currentNetwork = await provider.getNetwork();
+    this.storage.set('chainId', currentNetwork.chainId);
+    this.storage.set('chainName', currentNetwork.name);
+    this._currentNetwork.next(currentNetwork.name);
   }
-    
+
   async netChange() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-    const lastChainId = await this.storage.get("chainId");
-    provider.on("network", (newNetwork) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+    const lastChainId = await this.storage.get('chainId');
+    provider.on('network', (newNetwork) => {
         if (String(newNetwork.chainId) !== String(lastChainId)) {
           window.location.reload();
-        }        
+        }
     });
   }
 
@@ -142,22 +142,23 @@ export class CryptoService {
       }
     });
   }
-  
-  
+
+
   async activeSigner() {
     return new Promise( async (resolve, reject) => {
       try {
-        //this.opEventQuery.clearState();
+        // this.opEventQuery.clearState();
         const signer: any = await this.getSigner();
         const wallet: any = await this.signerAddress();
         if (wallet && signer) {
-         return resolve({ wallet, signer});
+          this.address = wallet;
+          return resolve({ wallet, signer});
         }
       } catch (error) {
        return reject(false);
       }
     });
-  }   
+  }
 
 /** Utils  */
 getNextContractAddress(address: any, nonce: any){

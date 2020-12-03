@@ -6,7 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { CryptoService } from './services/crypto-service/crypto.service';
 import { AuthService } from './services/auth-service/auth.service';
 import { StakingService } from './services/staking-service/staking.service';
-import { ethers } from 'ethers';
+import { PoolService } from './services/pool-service/pool.service';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +21,7 @@ export class AppComponent {
     private statusBar: StatusBar,
     public crypto: CryptoService,
     public stakingService: StakingService,
+    public poolService: PoolService,
     public navCtrl: NavController,
     public _auth: AuthService,
   ) {
@@ -29,8 +30,8 @@ export class AppComponent {
 
   async initializeApp() {
 
-    await this.crypto.setNetwork()
-    
+    await this.crypto.setNetwork();
+
     this.crypto.netChange();
 
     this.platform.ready().then( async () => {
@@ -57,6 +58,7 @@ export class AppComponent {
       this._auth.login(wallet.wallet, wallet.signer);
       console.log(`accounts changed..... ${wallet.wallet}`);
       await this.stakingService.setupSubscribers();
+      await this.poolService.setupSubscribers();
       this.navCtrl.navigateForward('/landing');
     }
   }
