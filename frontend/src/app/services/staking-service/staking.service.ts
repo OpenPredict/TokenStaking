@@ -43,7 +43,7 @@ export class StakingService {
         console.log('network: ' + networkName);
         if (networkName === 'homestead'){ // mainnet
           contractAddresses['OpenPredict']  = '0x4fe5851c9af07df9e5ad8217afae1ea72737ebda';
-          contractAddresses['TokenStaking'] = '';
+          contractAddresses['TokenStaking'] = '0x9031f531AcE9F95341EFbA0f8837951b2b029ea5';
         }
         if (networkName === 'kovan'){
           contractAddresses['OpenPredict']  = '0x44c55E45956503c7C097b622Cd21e209161C8e63';
