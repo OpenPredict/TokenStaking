@@ -16,8 +16,8 @@ module.exports = async function (deployer, network, accounts) {
         contracts['TokenStaking'] = await TokenStaking.new(
             contracts['OpenPredict'].address,
             accounts[1],
-            Constants['development'].periodSeconds,
-            Constants['development'].depositPeriodEnd
+            Constants['development'].depositPeriodEnd,
+            Constants['development'].periodSeconds
         );
     
         Object.keys(contracts).forEach((key) => {
