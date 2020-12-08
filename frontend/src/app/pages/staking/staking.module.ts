@@ -8,6 +8,7 @@ import { StakingPageRoutingModule } from './staking-routing.module';
 
 import { StakingPage } from './staking.page';
 import { SharedModule } from '@app/shared.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { SharedModule } from '@app/shared.module';
     FormsModule,
     IonicModule,
     StakingPageRoutingModule,
-    SharedModule
+    SharedModule,
+    MatProgressSpinnerModule
   ],
   declarations: [StakingPage]
 })
