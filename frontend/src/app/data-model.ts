@@ -35,7 +35,10 @@ export interface IStaking {
 
 export interface ILPTokens {
   id?: ID;
-  OPTETH: ethers.BigNumber;
-  OPTUSDT: ethers.BigNumber;
-  OPTUSDC: ethers.BigNumber;
+  ETHLP: ethers.BigNumber;
+  USDTLP: ethers.BigNumber;
+  USDCLP: ethers.BigNumber;
+  ETHAPY: ethers.BigNumber;
+  USDTAPY: ethers.BigNumber;
+  USDCAPY: ethers.BigNumber;
 }

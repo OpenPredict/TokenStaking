@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { PoolService } from '@app/services/pool-service/pool.service';
 import { NavController } from '@ionic/angular';
+import { PoolQuery } from '@app/services/pool-service/pool.service.query';
 
 @Component({
   selector: 'app-staking',
@@ -8,11 +10,19 @@ import { NavController } from '@ionic/angular';
 })
 export class StakingPage implements OnInit {
 
-  constructor(
-    public navCtrl: NavController
-  ) { }
+  poolData$ = this.poolQuery.selectEntity(this.poolService.address);
 
-  ngOnInit() {
+  constructor(
+    public navCtrl: NavController,
+    public poolQuery: PoolQuery,
+    private poolService: PoolService
+  ) { 
+    this.poolData$.subscribe( poolData => {
+      console.log('poolData updated:' + JSON.stringify(poolData));
+    });
+  }
+
+  async ngOnInit() {
   }
 
   open(url: string) {
