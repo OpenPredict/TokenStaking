@@ -53,7 +53,7 @@
           <br>
           Earn OPT
         </p>
-        <h2 class="opHeader apy opHeader__light" *ngIf="(poolData$ | async) as poolData">
+        <h2 class="opHeader apy opHeader__light" *ngIf="(poolData$ | async) as poolData; else loading">
           APY: ~{{poolData.USDCAPY}}%
         </h2>
         <p class="stakingPairs">
@@ -99,3 +99,6 @@
   </div>
   
 </ion-content>
+<ng-template #loading>
+    <mat-spinner ></mat-spinner>
+  </ng-template>
