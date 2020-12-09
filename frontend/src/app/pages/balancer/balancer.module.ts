@@ -8,6 +8,7 @@ import { BalancerPageRoutingModule } from './balancer-routing.module';
 
 import { BalancerPage } from './balancer.page';
 import { SharedModule } from '@app/shared.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { SharedModule } from '@app/shared.module';
     FormsModule,
     IonicModule,
     BalancerPageRoutingModule,
-    SharedModule
+    SharedModule,
+    MatProgressSpinnerModule
   ],
   declarations: [BalancerPage]
 })

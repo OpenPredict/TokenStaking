@@ -55,7 +55,7 @@
          <div class="rewardStatusData nodata">
             <div class="rewardStatus__item">
                <div class="rewardStatus__label">Est. APY</div>  
-               <div class="rewardStatus__value" *ngIf="(poolData$ | async) as poolData"> {{poolData.USDTAPY}}%</div>
+               <div class="rewardStatus__value" *ngIf="(poolData$ | async) as poolData; else loading"> {{poolData.USDTAPY}}%</div>
             </div>
            <div class="rewardStatus__item">
               <div class="rewardStatus__label">OPT-USDT pair</div>  
@@ -75,7 +75,7 @@
         
         <div class="harvest">
           <div class="harvest__item m-center">
-             <div class="harvest__value" *ngIf="(poolData$ | async) as poolData"> {{poolData.USDTLP}} </div>
+             <div class="harvest__value" *ngIf="(poolData$ | async) as poolData; else loading"> {{poolData.USDTLP}} </div>
              <div class="harvest__label">
                 OPT-USDT-LP held
              </div>      
@@ -98,3 +98,7 @@
 
       </div>
  </ion-content>
+
+ <ng-template #loading>
+   <mat-spinner ></mat-spinner>
+ </ng-template>
