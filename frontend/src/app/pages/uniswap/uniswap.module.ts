@@ -8,6 +8,7 @@ import { UniswapPageRoutingModule } from './uniswap-routing.module';
 
 import { UniswapPage } from './uniswap.page';
 import { SharedModule } from '@app/shared.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { SharedModule } from '@app/shared.module';
     FormsModule,
     IonicModule,
     UniswapPageRoutingModule,
-    SharedModule
+    SharedModule,
+    MatProgressSpinnerModule
   ],
   declarations: [UniswapPage]
 })

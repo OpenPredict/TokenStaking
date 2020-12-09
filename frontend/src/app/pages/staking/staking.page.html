@@ -26,8 +26,8 @@
           <br>
           Earn OPT
         </p>
-        <h2 class="opHeader apy opHeader__light" *ngIf="(poolData$ | async) as poolData">
-          APY: ~{{(poolData.ETHAPY + poolData.USDTAPY) / 2}}%
+        <h2 class="opHeader apy opHeader__light">
+          APY: <span *ngIf="(poolData$ | async) as poolData; else loading">~{{(poolData.ETHAPY + poolData.USDTAPY) / 2}}%</span>
         </h2>
         <p class="stakingPairs">
           - Daily: 0.3% (of Pool Volume)
@@ -53,8 +53,8 @@
           <br>
           Earn OPT
         </p>
-        <h2 class="opHeader apy opHeader__light" *ngIf="(poolData$ | async) as poolData; else loading">
-          APY: ~{{poolData.USDCAPY}}%
+        <h2 class="opHeader apy opHeader__light">
+          APY: <span *ngIf="(poolData$ | async) as poolData; else loading">~{{ poolData.USDCAPY }}%</span>
         </h2>
         <p class="stakingPairs">
           - Daily: 0.05% (of Pool Volume)
@@ -99,6 +99,7 @@
   </div>
   
 </ion-content>
+
 <ng-template #loading>
     <mat-spinner ></mat-spinner>
   </ng-template>
