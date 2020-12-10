@@ -25,6 +25,9 @@ const ETH = 0;
 const USDT = 1;
 const USDC = 2;
 
+// BAL drop APY (subject to weekly change)
+const BalancerDropAPY = 15;
+
 export const options: any[] = [];
 
 @Injectable({
@@ -220,14 +223,14 @@ async getUniSwap(poolId, address) {
 
     // For yield farming/harvest rewards: 1+[750/( liquidity )]] ^ 26
     console.log('liquidity: ' + ethTotalLiquidity + ' ' + tetherTotalLiquidity + ' ' + usdcTotalLiquidity);
-    const harvestAPY = Math.pow(1 + (750 / (ethTotalLiquidity + tetherTotalLiquidity + usdcTotalLiquidity)), 26);
+    const harvestAPY = ((Math.pow(1 + (750 / (ethTotalLiquidity + tetherTotalLiquidity + usdcTotalLiquidity)), 26))-1) * 100;
     console.log('harvest APY: ' + harvestAPY);
 
     // For UniSwap: ((volume * (1 + 0.003)^365) / liquidity ) * 100
     const ETHAPY  = Math.round((((   ethDailyVolume * Math.pow(1 + 0.003, 365)) / ethTotalLiquidity    ) * 100) + harvestAPY);
     const USDTAPY = Math.round((((tetherDailyVolume * Math.pow(1 + 0.003, 365)) / tetherTotalLiquidity ) * 100) + harvestAPY);
-    // For Balancer: 20% pool return
-    const USDCAPY = Math.round(20 + harvestAPY);
+    // For Balancer: BAL drop + harvest returns
+    const USDCAPY = Math.round(BalancerDropAPY + harvestAPY);
 
     console.log('APYs: ' + ETHAPY + ' ' + USDTAPY + ' ' + USDCAPY);
 
