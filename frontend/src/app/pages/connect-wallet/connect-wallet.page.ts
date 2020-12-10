@@ -59,7 +59,8 @@ export class ConnectWalletPage implements OnInit {
         this.navCtrl.navigateForward('/landing');
       }
     } catch (error) {
-      alert(error);
+      // alert(error);
+      console.log(error)
     }
   }
 
