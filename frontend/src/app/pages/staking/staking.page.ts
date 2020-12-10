@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PoolService } from '@app/services/pool-service/pool.service';
 import { NavController } from '@ionic/angular';
 import { PoolQuery } from '@app/services/pool-service/pool.service.query';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-staking',
@@ -10,16 +11,28 @@ import { PoolQuery } from '@app/services/pool-service/pool.service.query';
 })
 export class StakingPage implements OnInit {
 
-  poolData$ = this.poolQuery.selectEntity(this.poolService.address);
+  poolData$: Observable<any>;
 
   constructor(
     public navCtrl: NavController,
     public poolQuery: PoolQuery,
     private poolService: PoolService
   ) { 
-    this.poolData$.subscribe( poolData => {
-      console.log('poolData updated:' + JSON.stringify(poolData));
-    });
+    this.getPoolData();
+  }
+
+  getPoolData() {
+    setTimeout(() => {
+      if(this.poolService.address !== undefined &&  this.poolService.address !== "") {
+        console.log('this.poolService.address ' + this.poolService.address)
+        this.poolData$ = this.poolQuery.selectEntity(this.poolService.address);
+        this.poolData$.subscribe( poolData => {
+          console.log('poolData updated:' + JSON.stringify(poolData));
+        });
+      } else {
+        this.getPoolData();
+      }
+    }, 500);
   }
 
   async ngOnInit() {
