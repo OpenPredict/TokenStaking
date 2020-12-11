@@ -54,27 +54,27 @@ export class PoolService {
     }
 
   // ***************** pool queries *****************
-  async getPrices(tokenA, tokenB) {
+  async getPrices(tokenA) {
     const response = await axios({
-      url: `https://api.coingecko.com/api/v3/simple/price?ids=${tokenA},${tokenB}&vs_currencies=usd`,
+      url: `https://api.coingecko.com/api/v3/simple/price?ids=${tokenA}&vs_currencies=usd`,
       method: 'get',
       data: {}
     });
     return response;
   }
 
-  async getUniSwapTotals(poolId, tokenId) {
+  async getUniSwapTotals(poolId) {
     let response = await axios({
       url: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswapv2',
       method: 'post',
       data: {
               query: `
               {
-                pairDayDatas(first: 1, orderBy: date, orderDirection: desc, where: { pairAddress: "${poolId}" }) {
+                pairHourDatas(first: 24, orderBy: hourStartUnix, orderDirection: desc, where: { pair: "${poolId}" }) {
                     id
-                    dailyVolumeToken0
-                    dailyVolumeToken1
-                    dailyVolumeUSD
+                    hourStartUnix
+                    hourlyVolumeToken0
+                    hourlyVolumeToken1
                     reserveUSD
                 }
               }
@@ -82,25 +82,30 @@ export class PoolService {
       }
     });
 
-    const totalLiquidity = parseFloat(response.data.data.pairDayDatas[0].reserveUSD);
+    // get current timestamp
+    // count back until hourStartUnix < (current - 86400)
+    // for each valid entry, get the hourlyVolumeToken0 (for OPT)
+    // add them all up, multiply by price.
+
+    const totalLiquidity = parseFloat(response.data.data.pairHourDatas[0].reserveUSD);
     //console.log('totalLiquidity: ' + totalLiquidity);
 
-    const optVolume = parseFloat(response.data.data.pairDayDatas[0].dailyVolumeToken0);
-    //console.log('optVolume: ' + optVolume);
-    const tokenVolume = parseFloat(response.data.data.pairDayDatas[0].dailyVolumeToken1);
-    //console.log('tokenVolume: ' + tokenVolume);
+    let dailyVolumeOPT = 0;
+    let currentTime = (Date.now() / 1000);
+    //console.log('currentTime: ' + currentTime);
+    response.data.data.pairHourDatas.forEach(pairHourData => {
+      if(parseFloat(pairHourData.hourStartUnix) > (currentTime - 86400)){
+        dailyVolumeOPT += parseFloat(pairHourData.hourlyVolumeToken0);
+      }
+    });
+    //console.log('dailyVolumeOPT: ' + dailyVolumeOPT);
 
-    response = await this.getPrices('open-predict-token', tokenId);
-    const optPrice   = parseFloat(response.data['open-predict-token']['usd']);
+    response = await this.getPrices('open-predict-token');
+    const optPrice = parseFloat(response.data['open-predict-token']['usd']);
     //console.log('optPrice: ' + optPrice);
-    const tokenPrice = parseFloat(response.data[tokenId]['usd']);
-    //console.log('tokenPrice: ' + tokenPrice);
 
-    const dailyVolume = (optVolume * optPrice) + (tokenVolume * tokenPrice);
-
-    //console.log('daily uniswap volume for ' + tokenId + ': ' + dailyVolume);
-
-    return [dailyVolume, totalLiquidity];
+    const dailyVolumeUSD = (dailyVolumeOPT * optPrice);
+    return [dailyVolumeUSD, totalLiquidity];
   }
 
   async getBalancerTotals(poolId) {
@@ -217,11 +222,12 @@ async getUniSwap(poolId, address) {
   }
 
   async getAPYs(){
-    const [ethDailyVolume,       ethTotalLiquidity] = await this.getUniSwapTotals(pools[0], 'ethereum');
-    const [tetherDailyVolume, tetherTotalLiquidity] = await this.getUniSwapTotals(pools[1], 'tether');
-    const usdcTotalLiquidity = await this.getBalancerTotals(pools[2]);
+    const [ethDailyVolume,       ethTotalLiquidity] = await this.getUniSwapTotals(pools[0]);
+    const [tetherDailyVolume, tetherTotalLiquidity] = await this.getUniSwapTotals(pools[1]);
+    const                        usdcTotalLiquidity = await this.getBalancerTotals(pools[2]);
 
     // For yield farming/harvest rewards: 1+[750/( liquidity )]] ^ 26
+    console.log('volume: ' + ethDailyVolume + ' ' + tetherDailyVolume);
     console.log('liquidity: ' + ethTotalLiquidity + ' ' + tetherTotalLiquidity + ' ' + usdcTotalLiquidity);
     const harvestAPY = ((Math.pow(1 + (750 / (ethTotalLiquidity + tetherTotalLiquidity + usdcTotalLiquidity)), 26))-1) * 100;
     console.log('harvest APY: ' + harvestAPY);
