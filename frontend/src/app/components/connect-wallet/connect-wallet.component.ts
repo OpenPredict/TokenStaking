@@ -23,7 +23,6 @@ export class ConnectWallet implements OnInit {
 
   ngOnInit() {
     this.authQry.isLoggedIn2$.subscribe( res => this.connectedWallet = res );
-    console.log(this.connectedWallet);
   }
 
   async connectWallet() {

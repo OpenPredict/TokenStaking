@@ -7,7 +7,7 @@ import { WalletGuard } from './wallet.guard';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'connect-wallet',
+    redirectTo: 'landing',
     pathMatch: 'full'
   },
   {
@@ -15,13 +15,14 @@ const routes: Routes = [
     loadChildren: () => import('./pages/connect-wallet/connect-wallet.module').then( m => m.ConnectWalletPageModule)
   },
   {
+    path: 'landing',
+    canActivate : [WalletGuard],
+    loadChildren: () => import('./pages/staking/staking.module').then( m => m.StakingPageModule)
+  },
+  {
     path: 'opt',
     canActivate : [WalletGuard],
     loadChildren: () => import('./pages/otp-staking/otp-staking.module').then( m => m.OtpStakingPageModule)
-  },
-  {
-    path: 'landing',
-    loadChildren: () => import('./pages/staking/staking.module').then( m => m.StakingPageModule)
   },
   {
     path: 'uniswap',
