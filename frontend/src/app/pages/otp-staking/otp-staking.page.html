@@ -23,7 +23,7 @@
             </div>
    
             <div class="rewardStatus__item">
-               <div class="rewardStatus__label">APR</div>  
+               <div class="rewardStatus__label">APY</div>
                <div class="rewardStatus__value">8.5%</div>                         
             </div>            
          </div>
@@ -44,11 +44,11 @@
                </div>      
                <button
                class="btn btn-unlock"
-               [disabled]="!hasRewards(getRewards(stakingData))"
+               [disabled]="!hasBalance(getStaked(stakingData))"
                (click)="harvest()"
                >
                   <div class="btnInner">
-                     <span>Harvest</span>                     
+                     <span>Harvest (Stake & Rewards)</span>
                   </div>
                </button>                             
             </div> 

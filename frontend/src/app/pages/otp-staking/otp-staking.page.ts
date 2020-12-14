@@ -139,8 +139,8 @@ export class OtpStakingPage implements OnInit {
       : 0.0;
   }
 
-  hasRewards(rewards) {
-    return (isNaN(rewards)) ? false : (rewards > 0);
+  hasBalance(balance) {
+    return (isNaN(balance)) ? false : (balance > 0);
   }
 
   parseAmount(amount) {
