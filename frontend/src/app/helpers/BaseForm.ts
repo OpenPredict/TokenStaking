@@ -1,7 +1,11 @@
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
-import {OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
+
+@Component({
+    template: ''
+  })
 export abstract class BaseForm implements OnInit {
 
     form!: FormGroup;
