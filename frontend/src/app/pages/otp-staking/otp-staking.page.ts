@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, NavController, ToastController } from '@ionic/angular';
 import { DepositModalComponent } from '@app/components/deposit-modal/deposit-modal.component';
 import { AuthQuery } from '@app/services/auth-service/auth.service.query';
@@ -16,6 +16,7 @@ import { BaseForm } from '@app/helpers/BaseForm';
   selector: 'app-otp-staking',
   templateUrl: 'otp-staking.page.html',
   styleUrls: ['otp-staking.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OtpStakingPage implements OnInit {
 
@@ -38,6 +39,23 @@ export class OtpStakingPage implements OnInit {
       this.maxBet = 35000 - balance; 
       console.log('stakingData updated:' + JSON.stringify(stakingData));
     });
+
+    this.initializeTime('rewardStatus_value', this.stakingService.timeToReward);
+  }
+
+  initializeTime(id, endtime) {
+    const secondsSpan = document.getElementById(id);
+    let timeLeft = endtime;
+    function updateClock() {
+      timeLeft = timeLeft-1;
+      secondsSpan.innerHTML = new Date(timeLeft * 1000).toISOString().substr(11, 8);
+      if (timeLeft <= 0) {
+        clearInterval(timeinterval);
+      }
+    }
+  
+    updateClock();
+    const timeinterval = setInterval(updateClock, 1000);
   }
 
   // ***************** Buttons *****************
@@ -153,5 +171,4 @@ export class OtpStakingPage implements OnInit {
   goBack() {
     this.navCtrl.back();
   }      
-  
 }
