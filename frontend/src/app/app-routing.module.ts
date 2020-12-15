@@ -16,7 +16,10 @@ const routes: Routes = [
   },
   {
     path: 'landing',
-    canActivate : [WalletGuard],
+    loadChildren: () => import('./pages/landing/landing.module').then( m => m.LandingPageModule)
+  },
+  {
+    path: 'staking',
     loadChildren: () => import('./pages/staking/staking.module').then( m => m.StakingPageModule)
   },
   {
