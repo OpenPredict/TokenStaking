@@ -28,6 +28,7 @@ export class StakingService {
 
   address = '';
   contracts = [];
+  public timeToReward: any;
 
   constructor(
     public modalCtrl: ModalController,
@@ -244,6 +245,7 @@ export class StakingService {
       const currentTime = Math.floor(Date.now() / 1000);
       // gives us a value in the range of 0...this.rewardPeriodSecond) that is the remaining seconds to the next period.
       const timeToRewardChange = this.rewardPeriodSeconds - ((currentTime % depositPeriodStart) % this.rewardPeriodSeconds);
+      this.timeToReward = timeToRewardChange;
       console.log('timeToRewardChange: ' + timeToRewardChange);
       console.log('waiting..');
       await this.timeout(timeToRewardChange);
