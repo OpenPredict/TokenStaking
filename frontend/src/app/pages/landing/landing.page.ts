@@ -22,13 +22,11 @@ export class LandingPage implements OnInit {
   async ngOnInit() {
   }
 
+  openURL(url: string ) {
+    window.open(url, '_blank');
+  }
+
   navigateStaking() {
     this.navCtrl.navigateForward(`/staking`);
   }
-
-  purchaseOPT() {
-    // here link navigate to purchase
-    console.log("navigate to purchase")
-  }
-
 }

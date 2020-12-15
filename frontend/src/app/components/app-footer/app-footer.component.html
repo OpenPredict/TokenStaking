@@ -1,8 +1,17 @@
 <ion-footer [translucent]="true">
   <ion-toolbar  color="secondary">
     <div class="footer">
-      <div class="contract" (click)="navigateContract()">OpenPredict Staking Contract</div>     
-      <div class="token" (click)="navigateToken()">OpenPredict Token</div>     
+
+      <div class="contract" 
+      (click)="openURL('https://etherscan.io/address/0x33a48a75d4bBf189B96fe17a72B8AE2162a60203#code')">
+        OpenPredict Staking Contract
+      </div>
+
+      <div class="token" 
+      (click)="openURL('https://etherscan.io/address/0x4fe5851c9af07df9e5ad8217afae1ea72737ebda#code')">
+        OpenPredict Token
+      </div>
+
     </div>
   </ion-toolbar>
 </ion-footer>
