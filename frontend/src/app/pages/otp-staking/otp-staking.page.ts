@@ -115,7 +115,6 @@ export class OtpStakingPage implements OnInit {
     await toast.present();
     setTimeout( async () => {
       await toast.dismiss();
-      this.navCtrl.navigateForward('/landing');
     }, 3000);
   }
 // *************** Messages *********************

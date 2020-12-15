@@ -177,7 +177,7 @@ export class PoolService {
               }
               `
       }
-      });
+    });
     return response;
   }
 
@@ -260,18 +260,18 @@ async getUniSwap(poolId, address) {
 
     while (true) {
       const responses = [];
-      let response = await this.getUniSwap( pools[0], this.address);
+      let response = await this.getUniSwap( pools[0], this.address.toLowerCase());
       responses.push(response.data.data);
 
-      response = await this.getUniSwap( pools[1], this.address);
+      response = await this.getUniSwap( pools[1], this.address.toLowerCase());
       responses.push(response.data.data);
 
-      response = await this.getBalancer(pools[2], this.address);
+      response = await this.getBalancer(pools[2], this.address.toLowerCase());
       responses.push(response.data.data);
 
-      //console.log('ETH: ' +  JSON.stringify(responses[0]));
-      //console.log('USDT: ' + JSON.stringify(responses[1]));
-      //console.log('USDC: ' + JSON.stringify(responses[2]));
+      // console.log('ETH: ' +  JSON.stringify(responses[0]));
+      // console.log('USDT: ' + JSON.stringify(responses[1]));
+      // console.log('USDC: ' + JSON.stringify(responses[2]));
 
       const ETH  = (responses[0].liquidityPositions.length === 0)
                    ? 0 : parseFloat(responses[0].liquidityPositions[0].liquidityTokenBalance);
@@ -280,9 +280,9 @@ async getUniSwap(poolId, address) {
       const USDC = (responses[2].pool.shares.length        === 0)
                    ? 0 : parseFloat(responses[2].pool.shares[0].balance);
 
-      //console.log('ETH: ' + ETH);
-      //console.log('USDT: ' + USDT);
-      //console.log('USDC: ' + USDC);
+      // console.log('ETH: ' + ETH);
+      // console.log('USDT: ' + USDT);
+      // console.log('USDC: ' + USDC);
 
       this.pool[this.address] = {
         id: this.address,
