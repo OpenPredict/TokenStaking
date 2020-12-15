@@ -6,18 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app-footer.component.scss'],
 })
 export class AppFooterComponent implements OnInit {
+
   constructor() { }
 
-    ngOnInit() {
-    }
+  ngOnInit() {}
 
-    navigateContract() {
-      //here goes for contract action
-      console.log("contract")
-    }
-
-    navigateToken() {
-      //here goes for token action
-      console.log("token")
-    }
+  openURL(url: string ) {
+    window.open(url, '_blank');
+  }
 }
