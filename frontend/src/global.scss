@@ -718,7 +718,13 @@ button {
     &.btn-white {
         background: #ffffff;     
         
-    }    
+    } 
+    
+    &.btn-blue {
+        background: #1D2C49; 
+        color: #89F4ED;
+        border: 1px solid #89F4ED;    
+    } 
     
     &.btn-unlock {
         background: #89F4ED;            
