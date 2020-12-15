@@ -21,6 +21,7 @@ export class OtpStakingPage implements OnInit {
 
   loggedIn$: Observable<boolean> = this.authQuery.select( user => !!user.wallet );
   stakingData$ = this.stakingQuery.select();
+  maxBet: any;
 
   constructor(
     public modalCtrl: ModalController,
@@ -33,6 +34,8 @@ export class OtpStakingPage implements OnInit {
 
   ngOnInit() {
     this.stakingData$.subscribe( stakingData => {
+      let balance = +this.getContractBalance(stakingData);
+      this.maxBet = 35000 - balance; 
       console.log('stakingData updated:' + JSON.stringify(stakingData));
     });
   }
@@ -57,7 +60,8 @@ export class OtpStakingPage implements OnInit {
       const modalOpts = {
         component: DepositModalComponent,
         componentProps: {
-          balance: 0
+          balance: 0,
+          maxBet: this.maxBet
         },
         cssClass: 'deposit-modal',
       };
