@@ -14,6 +14,11 @@
         </div>
       </label>
       <input class="standardInput" type="text" min="0" formControlName="amount" placeholder="0.00" [textMask]="{mask: tokenMask }" />
+      <button class="btn btn-unlock btn-append" (click)="handleMaxBet()">
+        <div class="btnInner">
+           <span>Max</span>                    
+        </div>                  
+      </button>  
       <div *ngIf="hasError('amount', 'required')" class="standardInputErr">
         amount is required
       </div>                     
