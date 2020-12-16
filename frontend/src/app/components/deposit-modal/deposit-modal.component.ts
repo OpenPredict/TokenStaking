@@ -18,6 +18,7 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
 
   @Input() balance: number;
   @Input() action: number;
+  @Input() maxBet: any;
 
   tokenMask = BaseForm.tokenMask;
 
@@ -56,5 +57,9 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
     return (isNaN(amount)) ? '0.0' : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
   }
 
-
+  handleMaxBet() {
+    this.form.patchValue({
+      amount: this.maxBet.toString()
+    });
+  }
 }

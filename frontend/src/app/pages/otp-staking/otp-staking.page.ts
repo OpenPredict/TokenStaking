@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ModalController, NavController, ToastController } from '@ionic/angular';
 import { DepositModalComponent } from '@app/components/deposit-modal/deposit-modal.component';
 import { AuthQuery } from '@app/services/auth-service/auth.service.query';
@@ -16,11 +16,13 @@ import { BaseForm } from '@app/helpers/BaseForm';
   selector: 'app-otp-staking',
   templateUrl: 'otp-staking.page.html',
   styleUrls: ['otp-staking.page.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OtpStakingPage implements OnInit {
 
   loggedIn$: Observable<boolean> = this.authQuery.select( user => !!user.wallet );
   stakingData$ = this.stakingQuery.select();
+  maxBet: any;
 
   constructor(
     public modalCtrl: ModalController,
@@ -33,8 +35,28 @@ export class OtpStakingPage implements OnInit {
 
   ngOnInit() {
     this.stakingData$.subscribe( stakingData => {
+      let remainingInContract = 35000 - +this.getContractBalance(stakingData);
+      let walletBalance = +this.getWalletBalance(stakingData);
+      this.maxBet = (remainingInContract < walletBalance) ? remainingInContract : walletBalance;
       console.log('stakingData updated:' + JSON.stringify(stakingData));
     });
+
+    this.initializeTime('rewardStatus_value', this.stakingService.timeToReward);
+  }
+
+  initializeTime(id, endtime) {
+    const secondsSpan = document.getElementById(id);
+    let timeLeft = endtime;
+    function updateClock() {
+      timeLeft = timeLeft-1;
+      secondsSpan.innerHTML = new Date(timeLeft * 1000).toISOString().substr(11, 8);
+      if (timeLeft <= 0) {
+        clearInterval(timeinterval);
+      }
+    }
+  
+    updateClock();
+    const timeinterval = setInterval(updateClock, 1000);
   }
 
   // ***************** Buttons *****************
@@ -57,7 +79,8 @@ export class OtpStakingPage implements OnInit {
       const modalOpts = {
         component: DepositModalComponent,
         componentProps: {
-          balance: 0
+          balance: 0,
+          maxBet: this.maxBet
         },
         cssClass: 'deposit-modal',
       };
@@ -138,6 +161,12 @@ export class OtpStakingPage implements OnInit {
       : 0.0;
   }
 
+  getWalletBalance(stakingData){
+    return stakingData.entities[this.stakingService.address] !== undefined
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].WalletBalance)
+      : 0.0;
+  }
+
   hasBalance(balance) {
     return (isNaN(balance)) ? false : (balance > 0);
   }
@@ -149,5 +178,4 @@ export class OtpStakingPage implements OnInit {
   goBack() {
     this.navCtrl.back();
   }      
-  
 }
