@@ -2,8 +2,9 @@
     display: flex;
     flex-direction: column;
     flex-flow: wrap;
+    align-items: center;
     justify-content: center;
-    margin-top: 140px;
+    height: 100%;
     img {
         width: 260px;
         height: 331px;
