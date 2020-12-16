@@ -35,8 +35,9 @@ export class OtpStakingPage implements OnInit {
 
   ngOnInit() {
     this.stakingData$.subscribe( stakingData => {
-      let balance = +this.getContractBalance(stakingData);
-      this.maxBet = 35000 - balance; 
+      let remainingInContract = 35000 - +this.getContractBalance(stakingData);
+      let walletBalance = +this.getWalletBalance(stakingData);
+      this.maxBet = (remainingInContract < walletBalance) ? remainingInContract : walletBalance;
       console.log('stakingData updated:' + JSON.stringify(stakingData));
     });
 
@@ -157,6 +158,12 @@ export class OtpStakingPage implements OnInit {
   getContractBalance(stakingData){
     return stakingData.entities[this.stakingService.address] !== undefined
       ? this.parseAmount(stakingData.entities[this.stakingService.address].ContractBalance)
+      : 0.0;
+  }
+
+  getWalletBalance(stakingData){
+    return stakingData.entities[this.stakingService.address] !== undefined
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].WalletBalance)
       : 0.0;
   }
 
