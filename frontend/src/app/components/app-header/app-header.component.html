@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
-  <ion-toolbar class="padding015" color="secondary">
+  <ion-toolbar class="padding015" color="secondary" class="header_logo">
     <img class="logo" src="/assets/img/logo.svg" alt="">
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" class="wallet_info">
 
       <button class="btn btn-unlock" *ngIf="!(loggedIn$ | async)" (click)="login()">
         <div class="btnInner">
