@@ -644,6 +644,7 @@ ion-checkbox {
 
 .deposit-modal {
     --height: auto;
+    --width: 600px;
     @media only screen and (max-width: 767px) {
         --width: 85%;
     }    
