@@ -1,5 +1,5 @@
 <ion-footer [translucent]="true">
-  <ion-toolbar  color="secondary" class="footer_toolbar">
+  <ion-toolbar  color="secondary" [ngClass]="hideFooterClass === true ? 'footer_toolbar' : 'no_footer'">
     <div class="footer">
 
       <div class="contract" 
@@ -13,6 +13,15 @@
       </div>
 
     </div>
-    <div class="footer_mobile">Please use your desktop computer to access the staking portal</div>
+    <div class="footer_mobile">
+      <div class="footer_txt">Please use your desktop computer to access the staking portal</div>
+      <div class="btn_class">
+        <button class="btn agree_btn" (click)="hideFooter()">
+          <span>Agree</span>                     
+        </button>  
+      </div>
+    </div>
   </ion-toolbar>
 </ion-footer>
+
+

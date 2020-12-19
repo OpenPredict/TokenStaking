@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app-footer.component.scss'],
 })
 export class AppFooterComponent implements OnInit {
+  hideFooterClass: boolean = true;
 
   constructor() { }
 
@@ -13,5 +14,9 @@ export class AppFooterComponent implements OnInit {
 
   openURL(url: string ) {
     window.open(url, '_blank');
+  }
+
+  hideFooter() {
+    this.hideFooterClass = false;
   }
 }
