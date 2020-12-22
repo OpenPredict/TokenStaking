@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ModalController, NavController, ToastController } from '@ionic/angular';
 import { DepositModalComponent } from '@app/components/deposit-modal/deposit-modal.component';
 import { AuthQuery } from '@app/services/auth-service/auth.service.query';
@@ -23,6 +23,8 @@ export class OtpStakingPage implements OnInit {
   loggedIn$: Observable<boolean> = this.authQuery.select( user => !!user.wallet );
   stakingData$ = this.stakingQuery.select();
   maxBet: any;
+  interval: any;
+  loadTimeReward: boolean = false;
 
   constructor(
     public modalCtrl: ModalController,
@@ -44,19 +46,28 @@ export class OtpStakingPage implements OnInit {
     this.initializeTime('rewardStatus_value', this.stakingService.timeToReward);
   }
 
+  ngOnDestroy() {
+    clearInterval(this.interval);
+  }
+
   initializeTime(id, endtime) {
-    const secondsSpan = document.getElementById(id);
-    let timeLeft = endtime;
-    function updateClock() {
-      timeLeft = timeLeft-1;
-      secondsSpan.innerHTML = new Date(timeLeft * 1000).toISOString().substr(11, 8);
-      if (timeLeft <= 0) {
-        clearInterval(timeinterval);
+    setTimeout(() => {
+      if(endtime !== undefined && endtime != "") {
+        const secondsSpan = document.getElementById(id);
+        let timeLeft = endtime;
+        this.interval = setInterval(() => {
+          if(endtime > 0) {
+            timeLeft--;
+            this.loadTimeReward = true;
+            secondsSpan.innerHTML = new Date(timeLeft * 1000).toISOString().substr(11, 8);
+          } else {
+            clearInterval(this.interval);
+          }
+        },1000)
+      } else {
+        this.initializeTime(id, this.stakingService.timeToReward);
       }
-    }
-  
-    updateClock();
-    const timeinterval = setInterval(updateClock, 1000);
+    }, 500);
   }
 
   // ***************** Buttons *****************
