@@ -35,8 +35,8 @@ export class OtpStakingPage implements OnInit {
 
   ngOnInit() {
     this.stakingData$.subscribe( stakingData => {
-      let remainingInContract = 35000 - +this.getContractBalance(stakingData);
-      let walletBalance = +this.getWalletBalance(stakingData);
+      let remainingInContract = 35000 - +this.getContractBalance(stakingData, false);
+      let walletBalance = +this.getWalletBalance(stakingData, false);
       this.maxBet = (remainingInContract < walletBalance) ? remainingInContract : walletBalance;
       console.log('stakingData updated:' + JSON.stringify(stakingData));
     });
@@ -143,27 +143,27 @@ export class OtpStakingPage implements OnInit {
 // *************** Messages *********************
 
 // ************** helper functions ***************
-  getStaked(stakingData){
+  getStaked(stakingData, fix){
     return stakingData.entities[this.stakingService.address] !== undefined
-      ? this.parseAmount(stakingData.entities[this.stakingService.address].staked)
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].staked, fix)
       : 0.0;
   }
 
-  getRewards(stakingData){
+  getRewards(stakingData, fix){
     return stakingData.entities[this.stakingService.address] !== undefined
-      ? this.parseAmount(stakingData.entities[this.stakingService.address].rewards)
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].rewards, fix)
       : 0.0;
   }
 
-  getContractBalance(stakingData){
+  getContractBalance(stakingData, fix){
     return stakingData.entities[this.stakingService.address] !== undefined
-      ? this.parseAmount(stakingData.entities[this.stakingService.address].ContractBalance)
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].ContractBalance, fix)
       : 0.0;
   }
 
-  getWalletBalance(stakingData){
+  getWalletBalance(stakingData, fix){
     return stakingData.entities[this.stakingService.address] !== undefined
-      ? this.parseAmount(stakingData.entities[this.stakingService.address].WalletBalance)
+      ? this.parseAmount(stakingData.entities[this.stakingService.address].WalletBalance, fix)
       : 0.0;
   }
 
@@ -171,8 +171,9 @@ export class OtpStakingPage implements OnInit {
     return (isNaN(balance)) ? false : (balance > 0);
   }
 
-  parseAmount(amount) {
-    return (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
+  parseAmount(amount, fix) {
+    const parsed = (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString()));
+    return (fix) ? parsed.toFixed(2) : parsed;
   }
 
   goBack() {
