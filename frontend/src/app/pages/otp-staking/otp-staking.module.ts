@@ -6,6 +6,7 @@ import { OtpStakingPage } from './otp-staking.page';
 
 import { OtpStakingPageRoutingModule } from './otp-staking-routing.module';
 import { SharedModule } from '@app/shared.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -14,6 +15,7 @@ import { SharedModule } from '@app/shared.module';
     IonicModule,
     OtpStakingPageRoutingModule,
     SharedModule,
+    MatProgressSpinnerModule
   ],
   declarations: [OtpStakingPage]
 })
