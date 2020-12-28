@@ -19,7 +19,8 @@
    
             <div class="rewardStatus__item">
                <div class="rewardStatus__label">Reward Frequency</div>  
-               <div class="rewardStatus__value" id="rewardStatus_value"></div>                         
+               <div class="rewardStatus__value" id="rewardStatus_value" 
+               ><span *ngIf="loadTimeReward; else loading"></span></div>                         
             </div>
    
             <div class="rewardStatus__item">
@@ -30,7 +31,7 @@
 
          <div class="rewardStatus__item" *ngIf="(stakingData$ | async) as stakingData">
             <div class="rewardStatus__label">Total Staked</div>  
-            <div class="rewardStatus__value">{{ getContractBalance(stakingData, true) }} / 35000 OPT</div>                         
+            <div class="rewardStatus__value">~{{ getContractBalance(stakingData, true) }} / 35000 OPT</div>                         
          </div>
 
       </div>
@@ -84,3 +85,6 @@
       </div>
  </ion-content>
  <app-app-footer></app-app-footer>
+ <ng-template #loading>
+   <mat-spinner ></mat-spinner>
+ </ng-template>
