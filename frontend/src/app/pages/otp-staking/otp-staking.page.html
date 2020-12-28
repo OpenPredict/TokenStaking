@@ -30,21 +30,21 @@
 
          <div class="rewardStatus__item" *ngIf="(stakingData$ | async) as stakingData">
             <div class="rewardStatus__label">Total Staked</div>  
-            <div class="rewardStatus__value">{{ getContractBalance(stakingData) }} / 35000 OPT</div>                         
+            <div class="rewardStatus__value">{{ getContractBalance(stakingData, true) }} / 35000 OPT</div>                         
          </div>
 
       </div>
          <div class="harvest" *ngIf="(stakingData$ | async) as stakingData">
             <div class="harvest__item">
                <div class="harvest__value">
-                  {{ getRewards(stakingData) }}
+                  ~{{ getRewards(stakingData, true) }}
                </div>   
                <div class="harvest__label">
                   OPT earned
                </div>      
                <button
                class="btn btn-unlock"
-               [disabled]="!hasBalance(getStaked(stakingData))"
+               [disabled]="!hasBalance(getStaked(stakingData, false))"
                (click)="harvest()"
                >
                   <div class="btnInner">
@@ -54,7 +54,7 @@
             </div> 
             <div class="harvest__item">
                <div class="harvest__value">
-                  {{ getStaked(stakingData) }}
+                  ~{{ getStaked(stakingData, true) }}
                </div>   
                <div class="harvest__label">
                   OPT staked

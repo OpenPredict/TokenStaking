@@ -54,7 +54,7 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
   }
 
   parseAmount(amount: any): string {
-    return (isNaN(amount)) ? '0.0' : parseFloat(ethers.utils.formatUnits(amount.toString())).toFixed(2);
+    return (isNaN(amount)) ? '0.0' : ethers.utils.formatUnits(amount.toString());
   }
 
   handleMaxBet() {
