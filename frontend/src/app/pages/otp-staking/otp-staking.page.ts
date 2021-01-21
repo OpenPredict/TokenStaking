@@ -86,18 +86,20 @@ export class OtpStakingPage implements OnInit {
   }
 
   async stake() {
+    let maxAsString = new String(this.maxBet)
     try {
       const modalOpts = {
         component: DepositModalComponent,
         componentProps: {
           balance: 0,
-          maxBet: this.maxBet
+          maxBet: maxAsString
         },
         cssClass: 'deposit-modal',
       };
       const modal: HTMLIonModalElement = await this.modalCtrl.create(modalOpts);
       await modal.present();
       const selection = await modal.onDidDismiss();
+      console.log(selection)
       if ( selection.data ) {
         const amount = BaseForm.transformAmount(selection.data);
         console.log('amount:' + amount); // Do something with this Value i.e send it somewhere etc
