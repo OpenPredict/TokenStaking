@@ -118,7 +118,7 @@ export abstract class BaseForm implements OnInit {
         suffix: '',
         allowDecimal: true,
         decimalSymbol: '.',
-        decimalLimit: 8,
+        decimalLimit: 18,
     });
 
     /**
