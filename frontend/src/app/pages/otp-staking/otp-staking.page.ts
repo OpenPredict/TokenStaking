@@ -39,8 +39,8 @@ export class OtpStakingPage implements OnInit {
     this.stakingData$.subscribe( stakingData => {
       let remainingInContract = 35000 - +this.getContractBalance(stakingData, false);
       let walletBalance = +this.getWalletBalance(stakingData, false);
-      this.maxBet = (remainingInContract < walletBalance) ? remainingInContract : walletBalance;
-      console.log('stakingData updated:' + JSON.stringify(stakingData));
+      let walletBalanceAsString = this.getWalletBalanceAsString(stakingData);
+      this.maxBet = (remainingInContract < walletBalance) ? remainingInContract : walletBalanceAsString;
     });
 
     this.initializeTime('rewardStatus_value', this.stakingService.timeToReward);
@@ -86,13 +86,12 @@ export class OtpStakingPage implements OnInit {
   }
 
   async stake() {
-    let maxAsString = new String(this.maxBet)
     try {
       const modalOpts = {
         component: DepositModalComponent,
         componentProps: {
           balance: 0,
-          maxBet: maxAsString
+          maxBet: this.maxBet
         },
         cssClass: 'deposit-modal',
       };
@@ -101,7 +100,8 @@ export class OtpStakingPage implements OnInit {
       const selection = await modal.onDidDismiss();
       console.log(selection)
       if ( selection.data ) {
-        const amount = BaseForm.transformAmount(selection.data);
+        // const amount = BaseForm.transformAmount(selection.data);
+        const amount = selection.data;
         console.log('amount:' + amount); // Do something with this Value i.e send it somewhere etc
 
         try {
@@ -177,6 +177,12 @@ export class OtpStakingPage implements OnInit {
   getWalletBalance(stakingData, fix){
     return stakingData.entities[this.stakingService.address] !== undefined
       ? this.parseAmount(stakingData.entities[this.stakingService.address].WalletBalance, fix)
+      : 0.0;
+  }
+
+  getWalletBalanceAsString(stakingData){
+    return stakingData.entities[this.stakingService.address] !== undefined
+      ? ethers.utils.formatUnits(stakingData.entities[this.stakingService.address].WalletBalance.toString())
       : 0.0;
   }
 

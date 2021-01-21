@@ -281,7 +281,7 @@ export class StakingService {
   // ***************** Subscribers ******************
 
   // ***************** Contract Calls *****************
-  async deposit(amount: number){
+  async deposit(amount: any){
 
     return new Promise( async (resolve, reject) => {
 

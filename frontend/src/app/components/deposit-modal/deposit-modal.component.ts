@@ -59,7 +59,7 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
 
   handleMaxBet() {
     this.form.patchValue({
-      amount: this.maxBet.toString()
+      amount: this.maxBet
     });
   }
 }
