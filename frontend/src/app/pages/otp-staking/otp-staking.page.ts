@@ -40,7 +40,7 @@ export class OtpStakingPage implements OnInit {
       let remainingInContract = 35000 - +this.getContractBalance(stakingData, false);
       let walletBalance = +this.getWalletBalance(stakingData, false);
       let walletBalanceAsString = this.getWalletBalanceAsString(stakingData);
-      this.maxBet = (remainingInContract < walletBalance) ? remainingInContract : walletBalanceAsString;
+      this.maxBet = (remainingInContract < walletBalance) ? remainingInContract.toString() : walletBalanceAsString;
     });
 
     this.initializeTime('rewardStatus_value', this.stakingService.timeToReward);
