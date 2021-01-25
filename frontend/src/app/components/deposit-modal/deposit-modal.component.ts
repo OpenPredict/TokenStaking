@@ -50,7 +50,8 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
 
   confirm() {
     const amount = this.form.controls['amount'].value;
-    this.modalCtrl.dismiss( amount );
+    const amountToSend = amount.replace(/,/g, '');
+    this.modalCtrl.dismiss( amountToSend );
   }
 
   parseAmount(amount: any): string {
