@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormArray, Validators } from '@angular/forms';
+import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
+import { FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
 import { BaseForm } from '@app/helpers/BaseForm';
 import { CustomValidators } from '@app/helpers/CustomValidators';
 import { StakingService } from '@app/services/staking-service/staking.service';
@@ -37,12 +37,21 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
 
     this.stakingData$.subscribe( stakingData => {
       console.log('stakingData updated:' + JSON.stringify(stakingData));
-      this.form.get('amount').setValidators(
-        [ CustomValidators.numberRange(50, parseFloat(this.parseAmount(stakingData.WalletBalance)) )]);
+      // this.form.get('amount').setValidators(
+      //   [ CustomValidators.numberRange(50, parseFloat(this.parseAmount(stakingData.WalletBalance)) ) ]
+      // );
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
+
+  ngAfterViewInit() {
+    this.form.get('amount').setValidators(
+      [ 
+        CustomValidators.numberRange(50, parseFloat(this.maxBet.toString()))
+      ]
+    );
+  }
 
   cancel() {
     this.modalCtrl.dismiss();
