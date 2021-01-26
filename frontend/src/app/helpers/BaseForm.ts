@@ -1,6 +1,7 @@
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import {Component, OnInit} from '@angular/core';
+import { ethers } from 'ethers';
 
 
 @Component({
@@ -101,8 +102,9 @@ export abstract class BaseForm implements OnInit {
      * transform an input string from a currency mask into a float
      * @param {number} value
      */
-    static transformAmount(value){
-        return (value==null) ? 0 : parseFloat(value.replace('$', '').replace(/,/g, ''));
+    static transformAmount(value): ethers.BigNumber{
+        return ethers.utils.parseUnits( (value==null || value=="") ? '0' 
+                                                                   : value.replace('$', '').replace(/,/g, ''));
       }
 
     static dollarMask = createNumberMask({
