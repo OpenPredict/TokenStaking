@@ -37,9 +37,6 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
 
     this.stakingData$.subscribe( stakingData => {
       console.log('stakingData updated:' + JSON.stringify(stakingData));
-      // this.form.get('amount').setValidators(
-      //   [ CustomValidators.numberRange(50, parseFloat(this.parseAmount(stakingData.WalletBalance)) ) ]
-      // );
     });
   }
 
@@ -48,7 +45,8 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
   ngAfterViewInit() {
     this.form.get('amount').setValidators(
       [ 
-        CustomValidators.numberRange(50, parseFloat(this.maxBet.toString()))
+        CustomValidators.numberRange(ethers.utils.parseUnits('50'),
+                                     ethers.utils.parseUnits(this.maxBet.toString()))
       ]
     );
   }

@@ -1,4 +1,5 @@
 import { FormControl, FormGroup, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
+import { ethers } from 'ethers';
 import { BaseForm } from './BaseForm';
 
 export class CustomValidators {
@@ -94,13 +95,13 @@ export class CustomValidators {
         return null
     }
 
-    static numberRange(minimum: number, maximum: number): ValidatorFn {
+    static numberRange(minimum: ethers.BigNumber, maximum: ethers.BigNumber): ValidatorFn {
       return (control: AbstractControl): ValidationErrors | null => {
 
         const error: ValidationErrors = { number: true };
         console.log('control.value: ' + control.value);
-        const parsed = BaseForm.transformAmount(control.value);
-        const result = (parsed < minimum || parsed > maximum || isNaN(parsed)) ? error : null;
+        const parsed = BaseForm.transformAmount( control.value );
+        const result = (parsed.lt(minimum) || parsed.gt(maximum)) ? error : null;
 
         control.setErrors(result);
         return result;
