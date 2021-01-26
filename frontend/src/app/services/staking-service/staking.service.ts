@@ -298,17 +298,14 @@ export class StakingService {
       contracts['TokenStaking'] = new ethers.Contract(contractAddresses['TokenStaking'], TokenStaking.abi, _signer);
       contracts['OpenPredict'] = new ethers.Contract(contractAddresses['OpenPredict'], OpenPredict.abi, _signer);
       const parsedAmount = ethers.utils.parseUnits(amount.toString());
+      console.log('parsedAmount: ' + parsedAmount);
 
       try {
         const optionsOP = {};
-        const approveOP = contracts['OpenPredict'].approve(contractAddresses['TokenStaking'],
-                                                          parsedAmount,
-                                                          optionsOP );
-
-        const waitForApproval = Promise.all([approveOP]);
-        waitForApproval.then( async (res) => {
-          const approveOPWait = await res[0].wait();
-          if (approveOPWait.status === 1) {
+        let allowance = await contracts['OpenPredict'].allowance(this.address, contractAddresses['TokenStaking']);
+        allowance = ethers.BigNumber.from(allowance);
+        console.log('allowance: ' + allowance);
+        if(allowance.gte(parsedAmount)){
             console.log(`Placing deposit with | amount: ${amount}`);
             const depositTS = contracts['TokenStaking'].deposit(parsedAmount);
             const waitForDeposit = Promise.all([depositTS]);
@@ -321,14 +318,34 @@ export class StakingService {
               reject(
                 `Error during transaction creation: ${JSON.stringify(err)}`
               )
+          );
+        }else {
+          // approval not granted, approve for the difference.
+          const approveOP = contracts['OpenPredict'].approve(contractAddresses['TokenStaking'], parsedAmount.sub(allowance), optionsOP );
+          const waitForApproval = Promise.all([approveOP]);
+          waitForApproval.then( async (res) => {
+          const approveOPWait = await res[0].wait();
+          if (approveOPWait.status === 1) {
+            console.log(`Placing deposit with | amount: ${amount}`);
+                const depositTS = contracts['TokenStaking'].deposit(parsedAmount);
+                const waitForDeposit = Promise.all([depositTS]);
+                waitForDeposit.then( async (res) => {
+                const depositTSWait = await res[0].wait();
+            if (depositTSWait.status === 1) {
+                resolve(true);
+              }
+            }).catch( err =>
+              reject(
+                `Error during transaction creation: ${JSON.stringify(err)}`
+              )
             );
-
           }
-        }).catch( err =>
-          reject(
-            `Error during transaction creation: ${JSON.stringify(err)}`
-          )
-        );
+          }).catch( err =>
+            reject(
+              `Error during transaction creation: ${JSON.stringify(err)}`
+            )
+          );
+        }
       } catch (error) {
         console.log();
         reject(
