@@ -75,7 +75,7 @@ export class OtpStakingPage implements OnInit {
     try {
       const interaction = await this.ui
                               .loading(  this.stakingService.withdraw(),
-                              'You will be prompted for 1 contract interaction, please approve to successfully harvest, and please be patient as it may take a few moments to broadcast to the network.' )
+                              'You will be prompted for contract interactions, please approve to successfully harvest, and please be patient as it may take a few moments to broadcast to the network.' )
                               .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
       if (interaction) {
           this.showContractCallSuccess('Success! Your winnings have been harvested.');
@@ -107,7 +107,7 @@ export class OtpStakingPage implements OnInit {
         try {
           const interaction = await this.ui
                                   .loading(  this.stakingService.deposit(amount),
-                                  'You will be prompted for 2 contract interactions, please approve all to successfully stake, and please be patient as it may take a few moments to broadcast to the network.' )
+                                  'You will be prompted for contract interactions, please approve all to successfully stake, and please be patient as it may take a few moments to broadcast to the network.' )
                                   .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
           if (interaction) {
               this.showContractCallSuccess('Success! Your stake has been placed.');
