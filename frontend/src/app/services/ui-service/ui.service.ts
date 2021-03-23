@@ -39,6 +39,7 @@ export class UiService {
           await loader.present()
       } catch (e) {
         //  this.log.error(this.log.warn)
+        await loader.dismiss();
       }            
       try {
           let result: T = await action

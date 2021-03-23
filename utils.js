@@ -15,6 +15,12 @@ module.exports = {
             periodSeconds : 86400,      // 1 day
             depositPeriodEnd: 7956000   // 90 days
         },
+        'mainnet': {
+            provider : new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/f97f529377f6498c8293587deb03bf9c'),
+            secret: truffleConfig.networks.kovan.secret,
+            periodSeconds : 86400,      // 1 day
+            depositPeriodEnd: 7956000   // 90 days
+        },
         'test' : {
             provider : new ethers.providers.JsonRpcProvider("http://" + truffleConfig.networks.development.host + ":" + truffleConfig.networks.development.port.toString()),
             secret: truffleConfig.networks.test.secret,

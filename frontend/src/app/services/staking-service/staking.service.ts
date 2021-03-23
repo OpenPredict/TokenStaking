@@ -11,7 +11,7 @@ import { UiService } from '../ui-service/ui.service';
 import { ethers } from 'ethers';
 
 const OpenPredict  = require('@truffle/build/contracts/OpenPredict.json');
-const TokenStaking = require('@truffle/build/contracts/TokenStaking.json');
+const Farm = require('@truffle/build/contracts/Farm.json');
 const contractAddresses = [];
 
 export const options: any[] = [];
@@ -24,11 +24,14 @@ export class StakingService {
   staking = {};
   rewardPeriodSeconds = 86400;
 
+  ethAvgBlockTime = 13.5;
+
   balanceUpdates = {}; // stores Ids of new deposit events, to prevent the same event affecting state.
 
   address = '';
   contracts = [];
-  public timeToReward: any;
+  public timeToRewardsStart: any;
+  public timeToRewardsEnd: any;
 
   constructor(
     public modalCtrl: ModalController,
@@ -42,15 +45,15 @@ export class StakingService {
         console.log('network: ' + networkName);
         if (networkName === 'homestead'){ // mainnet
           contractAddresses['OpenPredict']  = '0x4fe5851c9af07df9e5ad8217afae1ea72737ebda';
-          contractAddresses['TokenStaking'] = '0x33a48a75d4bBf189B96fe17a72B8AE2162a60203';
+          contractAddresses['Farm'] = '0x33a48a75d4bBf189B96fe17a72B8AE2162a60203';
         }
         if (networkName === 'kovan'){
           contractAddresses['OpenPredict']  = '0x44c55E45956503c7C097b622Cd21e209161C8e63';
-          contractAddresses['TokenStaking'] = '0x9c16EfFE9aF5Fd06dE88C3fC6517CFbBe1A6C10e';
+          contractAddresses['Farm'] = '0x9c16EfFE9aF5Fd06dE88C3fC6517CFbBe1A6C10e';
         }
         if (networkName === 'unknown'){ // localhost
-          contractAddresses['OpenPredict']  = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
-          contractAddresses['TokenStaking'] = '0x5b1869D9A4C187F2EAa108f3062412ecf0526b24';
+          contractAddresses['OpenPredict'] = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
+          contractAddresses['Farm']        = '0x5b1869D9A4C187F2EAa108f3062412ecf0526b24';
         }
       });
     }
@@ -76,7 +79,12 @@ export class StakingService {
   async setupBalanceSubscriber(){
     // First get OPT wallet balance, then subscribe to changes to balance on-chain.
     const walletBalanceRaw = await this.contracts['OpenPredict'].balanceOf(this.address);
-    const contractBalanceRaw = await this.contracts['OpenPredict'].balanceOf(contractAddresses['TokenStaking']);
+
+    let poolInfo = await this.contracts['Farm'].poolInfo(0);
+    const contractBalanceRaw = poolInfo[4];
+
+    let userInfo = await this.contracts['Farm'].userInfo(0, this.address);
+    let staked = userInfo[0];
 
     console.log('walletBalanceRaw: ' + walletBalanceRaw.toString());
     console.log('contractBalanceRaw: ' + contractBalanceRaw.toString());
@@ -85,7 +93,7 @@ export class StakingService {
       id: this.address,
       WalletBalance: ethers.BigNumber.from(walletBalanceRaw),
       ContractBalance: ethers.BigNumber.from(contractBalanceRaw),
-      staked: this.staking[this.address].staked,
+      staked: staked,
       rewards: this.staking[this.address].rewards,
     };
     this.stakingStore.upsert(this.address, this.staking[this.address]);
@@ -110,8 +118,8 @@ export class StakingService {
         // Check wallet balance change
         if (from === this.address ||
             to === this.address ||
-            from === contractAddresses['TokenStaking'] ||
-            to === contractAddresses['TokenStaking']) {
+            from === contractAddresses['Farm'] ||
+            to === contractAddresses['Farm']) {
 
           const amount = ethers.BigNumber.from(log['data']);
           console.log('amount: ' + amount);
@@ -131,19 +139,19 @@ export class StakingService {
               console.log('Wallet Balance sub - from wallet address to: ' + to);
               currentWalletBalance = currentWalletBalance.sub(amount);
             }
-            if (to === contractAddresses['TokenStaking']) {
-              console.log('Contract Balance add - to contract address from: ' + from);
-              currentContractBalance = currentContractBalance.add(amount);
-            }
-            if (from === contractAddresses['TokenStaking']) {
-              console.log('Contract Balance sub - from contract address to: ' + to);
-              currentContractBalance = currentContractBalance.sub(amount);
-            }
+            let poolInfo = await this.contracts['Farm'].poolInfo(0);
+            currentContractBalance = poolInfo[4];
+            console.log('currentContractBalance: ' + currentContractBalance.toString());
+
+            let userInfo = await this.contracts['Farm'].userInfo(0, this.address);
+            let staked = userInfo[0];
+            console.log('staked: ' + staked.toString());
+
             this.staking[this.address] = {
               id: this.address,
               WalletBalance: currentWalletBalance,
               ContractBalance: currentContractBalance,
-              staked: this.staking[this.address].staked,
+              staked: staked,
               rewards: this.staking[this.address].rewards
             };
             this.stakingStore.upsert(this.address, this.staking[this.address]);
@@ -154,104 +162,28 @@ export class StakingService {
       });
   }
 
-  async setupHoldingsSubscriber(){
-    // create timeout to update holdings every period
-    this.updateHoldingsEveryPeriod();
+  async setupPendingSubscriber(){
 
-    const abi = new ethers.utils.Interface([
-      'event Deposit(address,uint256)'
-    ]);
+    const _USER: any = this.authQuery.getValue();
+    const _wallet: any = _USER.wallet;
+    const _signer: any = _USER.signer;
+    this.address = await _signer.getAddress();
+    console.log('address: ' + this.address);
+    this.contracts['Farm'] = new ethers.Contract(contractAddresses['Farm'], Farm.abi, _signer);
 
-    this.crypto.provider().on( {
-        address: this.contracts['TokenStaking'].address,
-        topics: [
-            ethers.utils.id('Deposit(address,uint256)'),
-          ],
-      }, async (log) => {
-        const events = abi.parseLog(log);
-        const sender = events['args'][0];
-        console.log('sender: ' + sender);
-        if (sender === this.address) {
-          // Unique identifier for log
-          const id = log['transactionHash'].concat(log['logIndex']);
-          console.log('id: ' + id);
-          if (!(id in this.balanceUpdates) && this.address in this.staking){
-            this.balanceUpdates[id] = true;
-            const amount = ethers.BigNumber.from(events['args'][1]);
-            console.log('staked: ' + this.staking[this.address].staked);
-            // Update staked amount
-            this.staking[this.address] = {
-              id: this.address,
-              WalletBalance: this.staking[this.address].WalletBalance,
-              ContractBalance: this.staking[this.address].ContractBalance,
-              staked: this.staking[this.address].staked.add(amount),
-              rewards: this.staking[this.address].rewards
-            };
-            this.stakingStore.upsert(this.address, this.staking[this.address]);
-          }
-        }
-      });
+    this.crypto.provider().on("block", async (currentBlock) => {
+        // Update staked amount
+        let pending = await this.contracts['Farm'].pending(0, this.address);
+        this.staking[this.address] = {
+          id: this.address,
+          WalletBalance: this.staking[this.address].WalletBalance,
+          ContractBalance: this.staking[this.address].ContractBalance,
+          staked: this.staking[this.address].staked,
+          rewards: pending,
+        };
+        this.stakingStore.upsert(this.address, this.staking[this.address]);
+    });
   }
-
-  timeout(secs) {
-    return new Promise(resolve => setTimeout(resolve, secs * 1000));
-  }
-
-  async completePeriod(depositPeriodStart){
-      // We must also account for the offset of the block arriving with the timestamp that changes to the new period.
-      // so we wait for that block here.
-      let nextPeriodsPassed = 0;
-      const currentTime = Math.floor(Date.now() / 1000);
-      const currentPeriodsPassed = Math.floor((currentTime - depositPeriodStart) / this.rewardPeriodSeconds);
-      // console.log('currentTime: ' + currentTime);
-      // console.log('depositPeriodStart: ' + depositPeriodStart);
-      // console.log('currentPeriodsPassed: ' + currentPeriodsPassed);
-      do {
-        const currentBlock = await this.crypto.provider().getBlock(this.crypto.provider().getBlockNumber());
-        const timestamp = currentBlock['timestamp'];
-
-        // calc days
-        nextPeriodsPassed = Math.floor((timestamp - depositPeriodStart) / this.rewardPeriodSeconds);
-
-        // console.log('timestamp: ' + timestamp);
-        // console.log('index: ' + currentBlock['number'].toString());
-        // console.log('currentPeriodsPassed: ' + currentPeriodsPassed);
-        // console.log('nextPeriodsPassed: ' + nextPeriodsPassed);
-        await this.timeout(1);
-      }while (currentPeriodsPassed !== nextPeriodsPassed);
-  }
-
-  async updateHoldingsEveryPeriod() {
-    // set a timer to update the status following depositPeriodEnd. timer restarts every period.
-    console.log('Entering updateHoldingsEveryPeriod..');
-    const depositPeriodStartRaw = await this.contracts['TokenStaking'].getDepositPeriodStart();
-    const depositPeriodStart = parseInt(depositPeriodStartRaw.toString());
-
-    while (true){
-      console.log('New period..');
-      // Update the holdings from the chain at every timer restart.
-      const holdingsRaw = await this.contracts['TokenStaking'].getHoldings();
-      console.log('holdingsRaw: ' + holdingsRaw);
-      this.staking[this.address] = {
-        id: this.address,
-        WalletBalance: this.staking[this.address].WalletBalance,
-        ContractBalance: this.staking[this.address].ContractBalance,
-        staked: ethers.BigNumber.from(holdingsRaw[0]),
-        rewards: ethers.BigNumber.from(holdingsRaw[1]),
-      };
-      this.stakingStore.upsert(this.address, this.staking[this.address]);
-
-      // wait for time to reward change (rewardPeriodSeconds - (current time % depositPeriodStart))
-      const currentTime = Math.floor(Date.now() / 1000);
-      // gives us a value in the range of 0...this.rewardPeriodSecond) that is the remaining seconds to the next period.
-      const timeToRewardChange = this.rewardPeriodSeconds - ((currentTime % depositPeriodStart) % this.rewardPeriodSeconds);
-      this.timeToReward = timeToRewardChange;
-      console.log('timeToRewardChange: ' + timeToRewardChange);
-      console.log('waiting..');
-      await this.timeout(timeToRewardChange);
-      this.completePeriod(depositPeriodStart);
-    }
- }
 
   async setupSubscribers(){
     const _USER: any = this.authQuery.getValue();
@@ -260,12 +192,10 @@ export class StakingService {
     this.address = await _signer.getAddress();
     console.log('address: ' + this.address);
     this.contracts['OpenPredict'] = new ethers.Contract(contractAddresses['OpenPredict'], OpenPredict.abi, _signer);
-    this.contracts['TokenStaking'] = new ethers.Contract(contractAddresses['TokenStaking'], TokenStaking.abi, _signer);
+    this.contracts['Farm'] = new ethers.Contract(contractAddresses['Farm'], Farm.abi, _signer);
 
     console.log('OpenPredict address: ' + this.contracts['OpenPredict'].address);
-    console.log('TokenStaking address: ' + this.contracts['TokenStaking'].address);
-
-    const depositPeriodStartRaw = await this.contracts['TokenStaking'].getDepositPeriodStart();
+    console.log('Farm address: ' + this.contracts['Farm'].address);
 
     this.staking[this.address] = {
       id: this.address,
@@ -275,7 +205,18 @@ export class StakingService {
       rewards: ethers.BigNumber.from('0'),
     };
 
-    this.setupHoldingsSubscriber();
+    // get time to start block and time to end block.
+    let currentBlock = await this.crypto.provider().getBlockNumber();
+    let startBlock = await this.contracts['Farm'].startBlock();
+    let endBlock = await this.contracts['Farm'].endBlock();
+
+    this.timeToRewardsStart = (currentBlock > startBlock) ? 0 : (startBlock-currentBlock) * this.ethAvgBlockTime;
+    this.timeToRewardsEnd   = (currentBlock >   endBlock) ? 0 :   (endBlock-currentBlock) * this.ethAvgBlockTime;
+
+    console.log('timeToRewardsStart: ' + this.timeToRewardsStart);
+    console.log('timeToRewardsEnd: ' + this.timeToRewardsEnd);
+
+    this.setupPendingSubscriber();
     this.setupBalanceSubscriber();
   }
   // ***************** Subscribers ******************
@@ -295,19 +236,19 @@ export class StakingService {
       }
 
       const contracts = [];
-      contracts['TokenStaking'] = new ethers.Contract(contractAddresses['TokenStaking'], TokenStaking.abi, _signer);
+      contracts['Farm'] = new ethers.Contract(contractAddresses['Farm'], Farm.abi, _signer);
       contracts['OpenPredict'] = new ethers.Contract(contractAddresses['OpenPredict'], OpenPredict.abi, _signer);
       const parsedAmount = ethers.utils.parseUnits(amount.toString());
       console.log('parsedAmount: ' + parsedAmount);
 
       try {
         const optionsOP = {};
-        let allowance = await contracts['OpenPredict'].allowance(this.address, contractAddresses['TokenStaking']);
+        let allowance = await contracts['OpenPredict'].allowance(this.address, contractAddresses['Farm']);
         allowance = ethers.BigNumber.from(allowance);
         console.log('allowance: ' + allowance);
         if(allowance.gte(parsedAmount)){
             console.log(`Placing deposit with | amount: ${amount}`);
-            const depositTS = contracts['TokenStaking'].deposit(parsedAmount);
+            const depositTS = contracts['Farm'].deposit(0, parsedAmount);
             const waitForDeposit = Promise.all([depositTS]);
             waitForDeposit.then( async (res) => {
               const depositTSWait = await res[0].wait();
@@ -321,13 +262,13 @@ export class StakingService {
           );
         }else {
           // approval not granted, approve for the difference.
-          const approveOP = contracts['OpenPredict'].approve(contractAddresses['TokenStaking'], parsedAmount.sub(allowance), optionsOP );
+          const approveOP = contracts['OpenPredict'].approve(contractAddresses['Farm'], parsedAmount.sub(allowance), optionsOP );
           const waitForApproval = Promise.all([approveOP]);
           waitForApproval.then( async (res) => {
           const approveOPWait = await res[0].wait();
           if (approveOPWait.status === 1) {
             console.log(`Placing deposit with | amount: ${amount}`);
-                const depositTS = contracts['TokenStaking'].deposit(parsedAmount);
+                const depositTS = contracts['Farm'].deposit(0, parsedAmount);
                 const waitForDeposit = Promise.all([depositTS]);
                 waitForDeposit.then( async (res) => {
                 const depositTSWait = await res[0].wait();
@@ -355,7 +296,7 @@ export class StakingService {
       });
     }
 
-    async withdraw(){
+    async withdraw(amount: any){
       return new Promise( async (resolve, reject) => {
 
         const _USER: any       = this.authQuery.getValue();
@@ -368,10 +309,10 @@ export class StakingService {
         }
 
         const contracts = [];
-        contracts['TokenStaking'] = new ethers.Contract(contractAddresses['TokenStaking'], TokenStaking.abi, _signer);
+        contracts['Farm'] = new ethers.Contract(contractAddresses['Farm'], Farm.abi, _signer);
 
         try {
-          const withdrawTS = contracts['TokenStaking'].withdraw();
+          const withdrawTS = contracts['Farm'].withdraw(0, amount);
           const waitForDeposit = Promise.all([withdrawTS]);
           waitForDeposit.then( async (res) => {
             const withdrawTSWait = await res[0].wait();

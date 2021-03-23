@@ -1,0 +1,34 @@
+:host {
+    padding: 20px;
+    text-align: center;
+}
+
+
+
+li.btnWrap {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;    
+}
+
+
+label  {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 15px;
+    text-align: right;
+    color: #A6AEBE;    
+    margin-bottom: 9px;
+    display: block;    
+}
+.standardInput {
+    padding-right: 90px !important;
+    color: white !important;
+}
+.btn-append {
+    margin-left: -55px;
+    height: 31px;
+    width: 50px;
+    padding-top: 0px;
+}

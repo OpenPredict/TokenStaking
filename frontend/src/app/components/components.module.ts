@@ -8,6 +8,7 @@ import { ConnectWallet } from '@components/connect-wallet/connect-wallet.compone
 import { AppHeaderComponent } from '@components/app-header/app-header.component';
 import { AppFooterComponent } from '@components/app-footer/app-footer.component';
 import { DepositModalComponent } from '@components/deposit-modal/deposit-modal.component';
+import { UnstakeModalComponent } from '@components/unstake-modal/unstake-modal.component';
 import { WalletSelectionModalComponent } from '@components/wallet-selection-modal/wallet-selection-modal.component';
 import { WalletOptionsModalComponent } from '@components/wallet-options-modal/wallet-options-modal.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -19,6 +20,7 @@ const components = [
   AppHeaderComponent,
   AppFooterComponent,
   DepositModalComponent,
+  UnstakeModalComponent,
   WalletSelectionModalComponent,
   WalletOptionsModalComponent,
   CryptoAddressDisplayComponent,
