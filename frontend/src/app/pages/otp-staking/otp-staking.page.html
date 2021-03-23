@@ -49,7 +49,7 @@
                (click)="harvest()"
                >
                   <div class="btnInner">
-                     <span>Harvest (Stake & Rewards)</span>
+                     <span>Harvest</span>
                   </div>
                </button>                             
             </div> 
@@ -66,9 +66,14 @@
                      <span>Unlock</span>                    
                   </div>                  
                </button>     
-               <button class="btn btn-unlock" *ngIf="loggedIn$ | async" (click)="stake()">
+               <button class="btn btn-unlock unstake" *ngIf="loggedIn$ | async" (click)="unstake()">
                   <div class="btnInner">
-                     <span>Stake OPT</span>                    
+                     <span>Unstake OPT</span>                    
+                  </div>                  
+               </button> 
+               <button class="btn btn-unlock add" *ngIf="loggedIn$ | async" (click)="stake()">
+                  <div class="btnInner">
+                     <span>+</span>                    
                   </div>                  
                </button>                  
             </div>          
