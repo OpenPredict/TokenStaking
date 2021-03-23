@@ -36,11 +36,11 @@ export class UnstakeModalComponent  extends BaseForm implements OnInit {
     });
 
     this.stakingData$.subscribe( stakingData => {
-      console.log('stakingData updated:' + JSON.stringify(stakingData));
+      //console.log('stakingData updated:' + JSON.stringify(stakingData));
       this.totalStaked = ethers.utils.formatUnits(stakingData.staked.toString());
       this.form.get('amount').setValidators(
         [ 
-          CustomValidators.numberRange(ethers.utils.parseUnits('50'),
+          CustomValidators.numberRange(ethers.utils.parseUnits('0.000000000000000001'),
                                        ethers.utils.parseUnits(this.totalStaked.toString()))
         ]
       );

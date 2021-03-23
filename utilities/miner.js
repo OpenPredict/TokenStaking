@@ -30,7 +30,7 @@ async function mine() {
         await sendRpc("evm_mine");
         console.log('done.');
         //await timeout(getRandomInt(2,8)); // average 5 second block time
-        await timeout(0.1); // average 5 second block time
+        await timeout(2); // average 5 second block time
     }
 }
 mine();

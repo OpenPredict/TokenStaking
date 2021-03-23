@@ -3,13 +3,11 @@
 
 Minimum Deposit: `50 OP tokens`
 
-APY: `8.5%`
+APY: `22%`
 
-Reward Frequency: `24 hours`
+Contract Running Time: `180 days`
 
-Contract Running Time: `90 days`
-
-Contract Maximum Holdings: `35k OP tokens`
+Contract Maximum Holdings: `100k OP tokens`
 
 Contract Address: https://etherscan.io/address/0x33a48a75d4bBf189B96fe17a72B8AE2162a60203#code
 

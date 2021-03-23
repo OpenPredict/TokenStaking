@@ -27,6 +27,7 @@ export class OtpStakingPage implements OnInit {
   maxBet: any;
   interval: any;
   loadTimeReward: boolean = false;
+  timerStarted: boolean = false;
 
   constructor(
     public modalCtrl: ModalController,
@@ -44,14 +45,18 @@ export class OtpStakingPage implements OnInit {
       let walletBalanceAsString = this.getWalletBalanceAsString(stakingData);
       this.maxBet = (remainingInContract < walletBalance) ? remainingInContract.toString() : walletBalanceAsString;
 
-      if(this.stakingService.timeToRewardsStart > 0){
-        const label = document.getElementById('rewardStatus_label');
-        label.innerHTML = "Time Until Rewards Start";
-        this.initializeTime('rewardStatus_value', this.stakingService.timeToRewardsStart);
-      }else if(this.stakingService.timeToRewardsEnd > 0){
-        const label = document.getElementById('rewardStatus_label');
-        label.innerHTML = "Time Left In Reward Pool";
-        this.initializeTime('rewardStatus_value', this.stakingService.timeToRewardsEnd);
+      if(!this.timerStarted){
+        if(this.stakingService.timeToRewardsStart > 0){
+          const label = document.getElementById('rewardStatus_label');
+          label.innerHTML = "Time Until Rewards Start";
+          this.initializeTime('rewardStatus_value', this.stakingService.timeToRewardsStart);
+          this.timerStarted = true;
+        }else if(this.stakingService.timeToRewardsEnd > 0){
+          const label = document.getElementById('rewardStatus_label');
+          label.innerHTML = "Time Left In Reward Pool";
+          this.initializeTime('rewardStatus_value', this.stakingService.timeToRewardsEnd);
+          this.timerStarted = true;
+        }        
       }
     });
 
@@ -168,7 +173,7 @@ export class OtpStakingPage implements OnInit {
                                   'You will be prompted for contract interactions, please approve all to successfully stake, and please be patient as it may take a few moments to broadcast to the network.' )
                                   .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
           if (interaction) {
-              this.showContractCallSuccess('Success! Your stake has been placed.');
+              this.showContractCallSuccess('Success! Your stake has been withdrawn.');
            }
          } catch (error) {
            alert(`Error ! ${error}`);
@@ -249,8 +254,9 @@ export class OtpStakingPage implements OnInit {
   }
 
   parseAmount(amount, fix) {
-    const parsed = (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString()));
-    return (fix) ? parsed.toFixed(2) : parsed;
+    const parsed = (isNaN(amount) || amount.toString()==='0') ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString()));
+    if(!fix) return parsed;
+    return (Number(parsed.toFixed(3)) === 0) ? "0.001" : parsed.toFixed(3);
   }
 
   goBack() {

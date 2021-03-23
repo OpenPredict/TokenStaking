@@ -1,3 +1,15 @@
-
-
-
+.add {
+    width: 35px;
+    border-radius: 21px;
+    margin-left: 10px;
+    .btnInner span {
+        font-size: 15px;
+    }
+}
+.unstake {
+    width: 170px;
+}
+.btn-unlock {
+    height: 35px;
+    padding: 0px;
+}

@@ -131,14 +131,9 @@ export class StakingService {
 
           if (!(id in this.balanceUpdates)){
             this.balanceUpdates[id] = true;
-            if (to === this.address) {
-              console.log('Wallet Balance add - to wallet address from: ' + from);
-              currentWalletBalance = currentWalletBalance.add(amount);
-            }
-            if (from === this.address) {
-              console.log('Wallet Balance sub - from wallet address to: ' + to);
-              currentWalletBalance = currentWalletBalance.sub(amount);
-            }
+
+            currentWalletBalance = await this.contracts['OpenPredict'].balanceOf(this.address);
+
             let poolInfo = await this.contracts['Farm'].poolInfo(0);
             currentContractBalance = poolInfo[4];
             console.log('currentContractBalance: ' + currentContractBalance.toString());
@@ -171,9 +166,20 @@ export class StakingService {
     console.log('address: ' + this.address);
     this.contracts['Farm'] = new ethers.Contract(contractAddresses['Farm'], Farm.abi, _signer);
 
+    let pending = await this.contracts['Farm'].pending(0, this.address);
+    console.log('pending: ' + pending.toString());
+    this.staking[this.address] = {
+      id: this.address,
+      WalletBalance: this.staking[this.address].WalletBalance,
+      ContractBalance: this.staking[this.address].ContractBalance,
+      staked: this.staking[this.address].staked,
+      rewards: pending,
+    };
+
     this.crypto.provider().on("block", async (currentBlock) => {
         // Update staked amount
         let pending = await this.contracts['Farm'].pending(0, this.address);
+        console.log('pending: ' + pending.toString());
         this.staking[this.address] = {
           id: this.address,
           WalletBalance: this.staking[this.address].WalletBalance,
@@ -255,10 +261,9 @@ export class StakingService {
               if (depositTSWait.status === 1) {
                 resolve(true);
               }
-            }).catch( err =>
-              reject(
-                `Error during transaction creation: ${JSON.stringify(err)}`
-              )
+            }).catch( err => {
+              resolve(false);
+            }
           );
         }else {
           // approval not granted, approve for the difference.
@@ -275,23 +280,18 @@ export class StakingService {
             if (depositTSWait.status === 1) {
                 resolve(true);
               }
-            }).catch( err =>
-              reject(
-                `Error during transaction creation: ${JSON.stringify(err)}`
-              )
+            }).catch( err => {
+              resolve(false);
+            }
             );
           }
-          }).catch( err =>
-            reject(
-              `Error during transaction creation: ${JSON.stringify(err)}`
-            )
+          }).catch( err => {
+            resolve(false);
+          }
           );
         }
       } catch (error) {
         console.log();
-        reject(
-          new Error(error)
-        );
       }
       });
     }
@@ -310,20 +310,19 @@ export class StakingService {
 
         const contracts = [];
         contracts['Farm'] = new ethers.Contract(contractAddresses['Farm'], Farm.abi, _signer);
+        const parsedAmount = ethers.utils.parseUnits(amount.toString());
 
         try {
-          const withdrawTS = contracts['Farm'].withdraw(0, amount);
+          const withdrawTS = contracts['Farm'].withdraw(0, parsedAmount);
           const waitForDeposit = Promise.all([withdrawTS]);
           waitForDeposit.then( async (res) => {
             const withdrawTSWait = await res[0].wait();
             if (withdrawTSWait.status === 1) {
               resolve(true);
             }
-          }).catch( err =>
-            reject(
-              `Error during transaction creation: ${JSON.stringify(err)}`
-            )
-          );
+          }).catch( err => {
+            resolve(false);
+          });
         } catch (error) {
           console.log();
           reject(
