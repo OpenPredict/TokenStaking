@@ -10,31 +10,31 @@ const routes: Routes = [
     redirectTo: 'landing',
     pathMatch: 'full'
   },
-  {
-    path: 'connect-wallet',
-    loadChildren: () => import('./pages/connect-wallet/connect-wallet.module').then( m => m.ConnectWalletPageModule)
-  },
+  // {
+  //   path: 'connect-wallet',
+  //   loadChildren: () => import('./pages/connect-wallet/connect-wallet.module').then( m => m.ConnectWalletPageModule)
+  // },
   {
     path: 'landing',
     loadChildren: () => import('./pages/landing/landing.module').then( m => m.LandingPageModule)
   },
-  {
-    path: 'staking',
-    loadChildren: () => import('./pages/staking/staking.module').then( m => m.StakingPageModule)
-  },
-  {
-    path: 'opt',
-    canActivate : [WalletGuard],
-    loadChildren: () => import('./pages/otp-staking/otp-staking.module').then( m => m.OtpStakingPageModule)
-  },
-  {
-    path: 'uniswap',
-    loadChildren: () => import('./pages/uniswap/uniswap.module').then( m => m.UniswapPageModule)
-  },
-  {
-    path: 'balancer',
-    loadChildren: () => import('./pages/balancer/balancer.module').then( m => m.BalancerPageModule)
-  },
+  // {
+  //   path: 'staking',
+  //   loadChildren: () => import('./pages/staking/staking.module').then( m => m.StakingPageModule)
+  // },
+  // {
+  //   path: 'opt',
+  //   canActivate : [WalletGuard],
+  //   loadChildren: () => import('./pages/otp-staking/otp-staking.module').then( m => m.OtpStakingPageModule)
+  // },
+  // {
+  //   path: 'uniswap',
+  //   loadChildren: () => import('./pages/uniswap/uniswap.module').then( m => m.UniswapPageModule)
+  // },
+  // {
+  //   path: 'balancer',
+  //   loadChildren: () => import('./pages/balancer/balancer.module').then( m => m.BalancerPageModule)
+  // },
 ];
 
 @NgModule({
