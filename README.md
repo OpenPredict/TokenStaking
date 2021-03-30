@@ -3,7 +3,7 @@
 
 Minimum Deposit: `50 OP tokens`
 
-APY: `22%`
+APY: `39%`
 
 Contract Running Time: `180 days`
 

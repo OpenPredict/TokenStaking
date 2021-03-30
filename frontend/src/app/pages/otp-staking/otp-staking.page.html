@@ -21,7 +21,7 @@
    
             <div class="rewardStatus__item">
                <div class="rewardStatus__label">APY</div>
-               <div class="rewardStatus__value">22%</div>                         
+               <div class="rewardStatus__value">39%</div>                         
             </div>   
          </div>
 
@@ -34,7 +34,7 @@
          <div class="harvest" *ngIf="(stakingData$ | async) as stakingData">
             <div class="harvest__item">
                <div class="harvest__value">
-                  ~{{ getRewards(stakingData, true) }}
+                  {{ getRewards(stakingData, true) }}
                </div>   
                <div class="harvest__label">
                   OPT earned
@@ -51,7 +51,7 @@
             </div> 
             <div class="harvest__item">
                <div class="harvest__value">
-                  ~{{ getStaked(stakingData, true) }}
+                  {{ getStaked(stakingData, true) }}
                </div>   
                <div class="harvest__label">
                   OPT staked

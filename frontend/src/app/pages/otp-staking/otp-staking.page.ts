@@ -40,6 +40,7 @@ export class OtpStakingPage implements OnInit {
 
   ngOnInit() {
     this.stakingData$.subscribe( stakingData => {
+      console.log('stakingData: ' + JSON.stringify(stakingData));
       let remainingInContract = 100000 - +this.getContractBalance(stakingData, false);
       let walletBalance = +this.getWalletBalance(stakingData, false);
       let walletBalanceAsString = this.getWalletBalanceAsString(stakingData);
@@ -254,9 +255,11 @@ export class OtpStakingPage implements OnInit {
   }
 
   parseAmount(amount, fix) {
-    const parsed = (isNaN(amount) || amount.toString()==='0') ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString()));
+    console.log(amount.toString());
+    if(isNaN(amount) || amount.toString()=='0') return 0;
+    const parsed = parseFloat(ethers.utils.formatUnits(amount.toString()));
     if(!fix) return parsed;
-    return (Number(parsed.toFixed(3)) === 0) ? "0.001" : parsed.toFixed(3);
+    return (Number(parsed.toFixed(3)) === 0) ? "~0.001" : parsed.toFixed(3);
   }
 
   goBack() {

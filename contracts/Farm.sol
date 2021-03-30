@@ -218,8 +218,10 @@ contract Farm is Ownable {
 
     // Transfer ERC20 and update the required ERC20 to payout all rewards
     function erc20Transfer(address _to, uint256 _amount) internal {
-        erc20.transfer(_to, _amount);
-        paidOut += _amount;
+        if(_amount > 0){
+            erc20.transfer(_to, _amount);
+            paidOut += _amount;
+        }
     }
 
     // increase the max stake amount allowed.
@@ -235,6 +237,7 @@ contract Farm is Ownable {
             user.amount = user.amount.add(amounts[i]);
             user.rewardDebt = user.amount.mul(pool.accERC20PerShare).div(1e36);
             pool.supply = pool.supply.add(amounts[i]);
+            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), amounts[i]);
         }       
     }
 
@@ -242,6 +245,6 @@ contract Farm is Ownable {
     function revoke(uint _pid) external onlyOwner {
         PoolInfo storage pool = poolInfo[_pid];
         uint256 supply = pool.lpToken.balanceOf(address(this));
-        pool.lpToken.safeTransferFrom(address(this), msg.sender, supply);
+        pool.lpToken.safeTransfer(msg.sender, supply);
     }
 }
