@@ -12,26 +12,22 @@
       <div class="rewardStatus">
          
          <div class="rewardStatusData">
+            
             <div class="rewardStatus__item">
-               <div class="rewardStatus__label">Minimum Deposit</div>  
-               <div class="rewardStatus__value">50 OPT</div>                         
-            </div>
-   
-            <div class="rewardStatus__item">
-               <div class="rewardStatus__label">Reward Frequency</div>  
+               <div class="rewardStatus__label" id="rewardStatus_label"></div>  
                <div class="rewardStatus__value" id="rewardStatus_value" 
-               ><span *ngIf="loadTimeReward; else loading"></span></div>                         
+               ><span *ngIf="loadTimeReward; else loading"></span>Loading..</div>                         
             </div>
    
             <div class="rewardStatus__item">
                <div class="rewardStatus__label">APY</div>
-               <div class="rewardStatus__value">8.5%</div>                         
-            </div>            
+               <div class="rewardStatus__value">22%</div>                         
+            </div>   
          </div>
 
          <div class="rewardStatus__item" *ngIf="(stakingData$ | async) as stakingData">
             <div class="rewardStatus__label">Total Staked</div>  
-            <div class="rewardStatus__value">~{{ getContractBalance(stakingData, true) }} / 35000 OPT</div>                         
+            <div class="rewardStatus__value">~{{ getContractBalance(stakingData, true) }} / 100000 OPT</div>                         
          </div>
 
       </div>
@@ -45,11 +41,11 @@
                </div>      
                <button
                class="btn btn-unlock"
-               [disabled]="!hasBalance(getStaked(stakingData, false))"
+               [disabled]="!hasBalance(getRewards(stakingData, false))"
                (click)="harvest()"
                >
                   <div class="btnInner">
-                     <span>Harvest (Stake & Rewards)</span>
+                     <span>Harvest</span>
                   </div>
                </button>                             
             </div> 
@@ -65,12 +61,31 @@
                      <img src="/assets/img/lock.svg" alt="" srcset="">
                      <span>Unlock</span>                    
                   </div>                  
-               </button>     
-               <button class="btn btn-unlock" *ngIf="loggedIn$ | async" (click)="stake()">
-                  <div class="btnInner">
-                     <span>Stake OPT</span>                    
-                  </div>                  
-               </button>                  
+               </button>
+               <div *ngIf="(stakingData$ | async) as stakingData">
+
+                  <div *ngIf="!hasBalance(getStaked(stakingData, false))">
+                     <button class="btn btn-unlock unstake" *ngIf="loggedIn$ | async" (click)="stake()">
+                        <div class="btnInner">
+                           <span>Stake OPT</span>                    
+                        </div>                  
+                     </button>
+                  </div>
+
+                  <div *ngIf="hasBalance(getStaked(stakingData, false))">
+                     <button class="btn btn-unlock unstake" *ngIf="loggedIn$ | async" (click)="unstake()">
+                        <div class="btnInner">
+                           <span>Unstake OPT</span>                    
+                        </div>                  
+                     </button> 
+                     <button class="btn btn-unlock add" *ngIf="loggedIn$ | async" (click)="stake()">
+                        <div class="btnInner">
+                           <span>+</span>                    
+                        </div>                  
+                     </button> 
+                  </div>
+
+               </div>                 
             </div>          
          </div>
          <p>

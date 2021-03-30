@@ -10,17 +10,17 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { TextMaskModule } from 'angular2-text-mask';
 
 @Component({
-  selector: 'app-deposit-modal',
-  templateUrl: './deposit-modal.component.html',
-  styleUrls: ['./deposit-modal.component.scss'],
+  selector: 'app-unstake-modal',
+  templateUrl: './unstake-modal.component.html',
+  styleUrls: ['./unstake-modal.component.scss'],
 })
-export class DepositModalComponent  extends BaseForm implements OnInit {
+export class UnstakeModalComponent  extends BaseForm implements OnInit {
 
   @Input() balance: number;
-  @Input() action: number;
-  @Input() maxBet: any;
 
   tokenMask = BaseForm.tokenMask;
+
+  totalStaked : any;
 
   stakingData$ = this.stakingQuery.selectEntity(this.stakingService.address);
 
@@ -37,19 +37,21 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
 
     this.stakingData$.subscribe( stakingData => {
       //console.log('stakingData updated:' + JSON.stringify(stakingData));
+      this.totalStaked = ethers.utils.formatUnits(stakingData.staked.toString());
+      this.form.get('amount').setValidators(
+        [ 
+          CustomValidators.numberRange(ethers.utils.parseUnits('0.000000000000000001'),
+                                       ethers.utils.parseUnits(this.totalStaked.toString()))
+        ]
+      );
     });
   }
 
   ngOnInit() { }
 
-  ngAfterViewInit() {
-    this.form.get('amount').setValidators(
-      [ 
-        CustomValidators.numberRange(ethers.utils.parseUnits('0.000000000000000001'),
-                                     ethers.utils.parseUnits(this.maxBet.toString()))
-      ]
-    );
-  }
+  // ngAfterViewInit() {
+
+  // }
 
   cancel() {
     this.modalCtrl.dismiss();
@@ -65,9 +67,9 @@ export class DepositModalComponent  extends BaseForm implements OnInit {
     return (isNaN(amount)) ? '0.0' : ethers.utils.formatUnits(amount.toString());
   }
 
-  handleMaxBet() {
+  handleMax() {
     this.form.patchValue({
-      amount: this.maxBet
+      amount: this.totalStaked
     });
   }
 }

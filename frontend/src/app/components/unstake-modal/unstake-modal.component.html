@@ -1,5 +1,5 @@
 <h2 class="modalHeader">
-  Stake OPT
+  Unstake OPT
 </h2>
 
 <form [formGroup]="form" >
@@ -10,11 +10,11 @@
     <li>
       <label position="stacked">
         <div class="standardInputLabel" *ngIf="(stakingData$ | async) as stakingData">
-          Available to stake: {{ parseAmount(stakingData.WalletBalance) }}
+          Available to unstake: {{ parseAmount(stakingData.staked) }}
         </div>
       </label>
       <input class="standardInput" type="text" min="0" formControlName="amount" placeholder="0.00" [textMask]="{mask: tokenMask }" />
-      <button class="btn btn-unlock btn-append" (click)="handleMaxBet()">
+      <button class="btn btn-unlock btn-append" (click)="handleMax()">
         <div class="btnInner">
            <span>Max</span>                    
         </div>                  

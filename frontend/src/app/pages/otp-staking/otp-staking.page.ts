@@ -11,6 +11,8 @@ import { StakingQuery } from '@app/services/staking-service/staking.service.quer
 import { IStaking } from '@app/data-model';
 import { ethers } from 'ethers';
 import { BaseForm } from '@app/helpers/BaseForm';
+import moment from "moment";
+import { UnstakeModalComponent } from '@app/components/unstake-modal/unstake-modal.component';
 
 @Component({
   selector: 'app-otp-staking',
@@ -25,6 +27,7 @@ export class OtpStakingPage implements OnInit {
   maxBet: any;
   interval: any;
   loadTimeReward: boolean = false;
+  timerStarted: boolean = false;
 
   constructor(
     public modalCtrl: ModalController,
@@ -37,13 +40,27 @@ export class OtpStakingPage implements OnInit {
 
   ngOnInit() {
     this.stakingData$.subscribe( stakingData => {
-      let remainingInContract = 35000 - +this.getContractBalance(stakingData, false);
+      let remainingInContract = 100000 - +this.getContractBalance(stakingData, false);
       let walletBalance = +this.getWalletBalance(stakingData, false);
       let walletBalanceAsString = this.getWalletBalanceAsString(stakingData);
       this.maxBet = (remainingInContract < walletBalance) ? remainingInContract.toString() : walletBalanceAsString;
+
+      if(!this.timerStarted){
+        if(this.stakingService.timeToRewardsStart > 0){
+          const label = document.getElementById('rewardStatus_label');
+          label.innerHTML = "Time Until Rewards Start";
+          this.initializeTime('rewardStatus_value', this.stakingService.timeToRewardsStart);
+          this.timerStarted = true;
+        }else if(this.stakingService.timeToRewardsEnd > 0){
+          const label = document.getElementById('rewardStatus_label');
+          label.innerHTML = "Time Left In Reward Pool";
+          this.initializeTime('rewardStatus_value', this.stakingService.timeToRewardsEnd);
+          this.timerStarted = true;
+        }        
+      }
     });
 
-    this.initializeTime('rewardStatus_value', this.stakingService.timeToReward);
+
   }
 
   ngOnDestroy() {
@@ -51,6 +68,7 @@ export class OtpStakingPage implements OnInit {
   }
 
   initializeTime(id, endtime) {
+    const interval = 1000;
     setTimeout(() => {
       if(endtime !== undefined && endtime != "") {
         const secondsSpan = document.getElementById(id);
@@ -58,14 +76,22 @@ export class OtpStakingPage implements OnInit {
         this.interval = setInterval(() => {
           if(endtime > 0) {
             timeLeft--;
+            if(timeLeft < 0){
+              return;
+            }
             this.loadTimeReward = true;
-            secondsSpan.innerHTML = new Date(timeLeft * 1000).toISOString().substr(11, 8);
+            let duration = moment.duration((timeLeft).toString(), "seconds");
+            let d = Math.floor(moment.duration(duration).asDays());
+            let h = moment.duration(duration).hours();
+            let m = moment.duration(duration).minutes();
+            let s = moment.duration(duration).seconds();
+            secondsSpan.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
           } else {
             clearInterval(this.interval);
           }
-        },1000)
+        }, interval)
       } else {
-        this.initializeTime(id, this.stakingService.timeToReward);
+        //this.initializeTime(id, this.stakingService.timeToRewardsStart);
       }
     }, 500);
   }
@@ -74,7 +100,7 @@ export class OtpStakingPage implements OnInit {
   async harvest() {
     try {
       const interaction = await this.ui
-                              .loading(  this.stakingService.withdraw(),
+                              .loading(  this.stakingService.withdraw(0),
                               'You will be prompted for contract interactions, please approve to successfully harvest, and please be patient as it may take a few moments to broadcast to the network.' )
                               .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
       if (interaction) {
@@ -111,6 +137,43 @@ export class OtpStakingPage implements OnInit {
                                   .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
           if (interaction) {
               this.showContractCallSuccess('Success! Your stake has been placed.');
+           }
+         } catch (error) {
+           alert(`Error ! ${error}`);
+         }
+
+      }
+    } catch (error) {
+       console.log(`modal present error ${error}`);
+       throw error;
+    }
+  }
+
+  async unstake() {
+    try {
+      const modalOpts = {
+        component: UnstakeModalComponent,
+        componentProps: {
+          balance: 0,
+        },
+        cssClass: 'deposit-modal',
+      };
+      const modal: HTMLIonModalElement = await this.modalCtrl.create(modalOpts);
+      await modal.present();
+      const selection = await modal.onDidDismiss();
+      console.log(selection)
+      if ( selection.data ) {
+        // const amount = BaseForm.transformAmount(selection.data);
+        const amount = selection.data;
+        console.log('amount:' + amount); // Do something with this Value i.e send it somewhere etc
+
+        try {
+          const interaction = await this.ui
+                                  .loading(  this.stakingService.withdraw(amount),
+                                  'You will be prompted for contract interactions, please approve all to successfully stake, and please be patient as it may take a few moments to broadcast to the network.' )
+                                  .catch( e => alert(`Error with contract interactions ${JSON.stringify(e)}`) );
+          if (interaction) {
+              this.showContractCallSuccess('Success! Your stake has been withdrawn.');
            }
          } catch (error) {
            alert(`Error ! ${error}`);
@@ -191,8 +254,9 @@ export class OtpStakingPage implements OnInit {
   }
 
   parseAmount(amount, fix) {
-    const parsed = (isNaN(amount)) ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString()));
-    return (fix) ? parsed.toFixed(2) : parsed;
+    const parsed = (isNaN(amount) || amount.toString()==='0') ? 0 : parseFloat(ethers.utils.formatUnits(amount.toString()));
+    if(!fix) return parsed;
+    return (Number(parsed.toFixed(3)) === 0) ? "0.001" : parsed.toFixed(3);
   }
 
   goBack() {
