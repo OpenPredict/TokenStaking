@@ -10,23 +10,10 @@ import { UiService } from '../ui-service/ui.service';
 import { ethers } from 'ethers';
 
 const pools = [
-  '0xe7700d9cd80517ade303048f4c55f03284a095cc', // UniSwap: OPT-ETH
-  '0xc676ea0f3dd28d4207b713578ecee609ee525784', // UniSwap: OPT-USDT
-  '0xd3d14de568990854705c40221f75efbad8c0c981'  // Balancer: OPT-USDC
+  '0xeab59cdd581e532a910b53f7396cd8fc27e49d6f', // UniSwap: OPT-USDC
 ];
 
-const OPTAddresses = [
-  '0x64a63ef1b19519be8afb9080e5725bd608d6f389' // Balancer: OPT Address
-]
-
 const updateSeconds = 20;
-
-const ETH = 0;
-const USDT = 1;
-const USDC = 2;
-
-// BAL drop APY (subject to weekly change)
-const BalancerDropAPY = 15;
 
 export const options: any[] = [];
 
@@ -108,79 +95,6 @@ export class PoolService {
     return [dailyVolumeUSD, totalLiquidity];
   }
 
-  async getBalancerTotals(poolId) {
-    const response = await axios({
-      url: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer',
-      method: 'post',
-      data: {
-        query: ` {
-          pool (id: "${poolId}")
-          {
-            liquidity
-            totalShares
-            shares (where:{id: "${poolId + '-' + OPTAddresses[0]}"}) {
-              balance
-            }
-          }
-        } `
-      }
-    });
-
-    // remove OPT addresses liquidity from the balancer pool
-    const pool = response.data.data.pool;
-    //console.log('pool: ' + JSON.stringify(pool));
-    const percentageShares = parseFloat(pool.shares[0].balance) / parseFloat(pool.totalShares);
-    //console.log('percentageShares: ' + percentageShares);
-    const liquidity = parseFloat(pool.liquidity) - (percentageShares * parseFloat(pool.liquidity));
-    //console.log('liquidity: ' + liquidity);
-    return liquidity;
-  }
-
-  async getBalancer(poolId, address) {
-    // const address = this.crypto.address;
-    console.log('address: ' + address);
-    const response = await axios({
-      url: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer',
-      method: 'post',
-      data: {
-              query: `
-              {
-                  pool (id: "${poolId}")
-                  {
-                      id
-                      publicSwap
-                      finalized
-                      liquidity
-                      swapFee
-                      totalWeight
-                      totalShares
-                      totalSwapVolume
-                      tokensList
-                      tokens
-                      {
-                          id
-                          address
-                          balance
-                          decimals
-                          symbol
-                          denormWeight
-                      }
-                      shares (orderBy: balance, orderDirection: desc, where:{id: "${poolId + '-' + address}", balance_gt:"0"})
-                      {
-                          id
-                          userAddress {
-                              id
-                          }
-                          balance
-                      }
-                  }
-              }
-              `
-      }
-    });
-    return response;
-  }
-
 async getUniSwap(poolId, address) {
     const response = await axios({
       url: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswapv2',
@@ -221,33 +135,23 @@ async getUniSwap(poolId, address) {
     return new Promise(resolve => setTimeout(resolve, secs * 1000));
   }
 
-  async getAPYs(){
-    const [ethDailyVolume,       ethTotalLiquidity] = await this.getUniSwapTotals(pools[0]);
-    const [tetherDailyVolume, tetherTotalLiquidity] = await this.getUniSwapTotals(pools[1]);
-    const                        usdcTotalLiquidity = await this.getBalancerTotals(pools[2]);
-
+  async getAPRs(){
+    console.log('getting apy..');
+    const [usdcDailyVolume,       usdcTotalLiquidity] = await this.getUniSwapTotals(pools[0]);
     // For yield farming/harvest rewards: 1+[750/( liquidity )]] ^ 26
-    console.log('volume: ' + ethDailyVolume + ' ' + tetherDailyVolume);
-    console.log('liquidity: ' + ethTotalLiquidity + ' ' + tetherTotalLiquidity + ' ' + usdcTotalLiquidity);
-    const harvestAPY = ((Math.pow(1 + (750 / (ethTotalLiquidity + tetherTotalLiquidity + usdcTotalLiquidity)), 26))-1) * 100;
-    console.log('harvest APY: ' + harvestAPY);
+    console.log('volume: ' + usdcDailyVolume);
+    console.log('liquidity: ' + usdcTotalLiquidity);
+    const harvestAPR = ((Math.pow(1 + (750 / (usdcTotalLiquidity)), 26))-1) * 100;
+    console.log('harvest APR: ' + harvestAPR);
 
     // For UniSwap: ((volume * (1 + 0.003)^365) / liquidity ) * 100
-    const ETHAPY  = Math.round((((   ethDailyVolume * Math.pow(1 + 0.003, 365)) / ethTotalLiquidity    ) * 100) + harvestAPY);
-    const USDTAPY = Math.round((((tetherDailyVolume * Math.pow(1 + 0.003, 365)) / tetherTotalLiquidity ) * 100) + harvestAPY);
-    // For Balancer: BAL drop + harvest returns
-    const USDCAPY = Math.round(BalancerDropAPY + harvestAPY);
-
-    console.log('APYs: ' + ETHAPY + ' ' + USDTAPY + ' ' + USDCAPY);
+    const USDCAPR  = Math.round((((   usdcDailyVolume * Math.pow(1 + 0.003, 365)) / usdcTotalLiquidity    ) * 100) + harvestAPR);
+    //console.log('APRs: ' + ETHAPR + ' ' + USDTAPR + ' ' + USDCAPR);
 
     this.pool[this.address] = {
       id: this.address,
-      ETHLP: ethers.BigNumber.from('0'),
-      USDTLP: ethers.BigNumber.from('0'),
       USDCLP: ethers.BigNumber.from('0'),
-      ETHAPY: ETHAPY,
-      USDTAPY: USDTAPY,
-      USDCAPY: USDCAPY,
+      USDCAPR: USDCAPR,
     };
   }
 
@@ -256,29 +160,20 @@ async getUniSwap(poolId, address) {
     const _signer: any = _USER.signer;
     this.address = await _signer.getAddress();
     console.log('address: ' + this.address);
-    await this.getAPYs();
+    console.log('getting apys..');
+    await this.getAPRs();
 
     while (true) {
       const responses = [];
       let response = await this.getUniSwap( pools[0], this.address.toLowerCase());
       responses.push(response.data.data);
 
-      response = await this.getUniSwap( pools[1], this.address.toLowerCase());
-      responses.push(response.data.data);
-
-      response = await this.getBalancer(pools[2], this.address.toLowerCase());
-      responses.push(response.data.data);
-
       // console.log('ETH: ' +  JSON.stringify(responses[0]));
       // console.log('USDT: ' + JSON.stringify(responses[1]));
       // console.log('USDC: ' + JSON.stringify(responses[2]));
 
-      const ETH  = (responses[0].liquidityPositions.length === 0)
+      const USDC  = (responses[0].liquidityPositions.length === 0)
                    ? 0 : parseFloat(responses[0].liquidityPositions[0].liquidityTokenBalance);
-      const USDT = (responses[1].liquidityPositions.length === 0)
-                   ? 0 : parseFloat(responses[1].liquidityPositions[0].liquidityTokenBalance);
-      const USDC = (responses[2].pool.shares.length        === 0)
-                   ? 0 : parseFloat(responses[2].pool.shares[0].balance);
 
       // console.log('ETH: ' + ETH);
       // console.log('USDT: ' + USDT);
@@ -286,12 +181,8 @@ async getUniSwap(poolId, address) {
 
       this.pool[this.address] = {
         id: this.address,
-        ETHLP: ETH,
-        USDTLP: USDT,
         USDCLP: USDC,
-        ETHAPY: this.pool[this.address].ETHAPY,
-        USDTAPY: this.pool[this.address].USDTAPY,
-        USDCAPY: this.pool[this.address].USDCAPY,
+        USDCAPR: this.pool[this.address].USDCAPR,
       };
 
       this.poolStore.upsert(this.address, this.pool[this.address]);

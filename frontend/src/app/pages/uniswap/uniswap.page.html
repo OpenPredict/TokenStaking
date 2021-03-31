@@ -7,59 +7,17 @@
         Uniswap Liquidity Farming
       </h1>
       <p>
-        Hold OPT-ETH-LP and earn OPT
-      </p>      
-      <div class="rewardStatus">
-         
-        <div class="rewardStatusData nodata">
-         <div class="rewardStatus__item">
-            <div class="rewardStatus__label">Est. APY</div>  
-            <div class="rewardStatus__value" *ngIf="(poolData$ | async) as poolData"> {{poolData.ETHAPY}}%</div>
-         </div>
-          <div class="rewardStatus__item">
-            <div class="rewardStatus__label">OPT-ETH pair</div>  
-            <div (click)="openURL('https://info.uniswap.org/pair/0xe7700d9cd80517ade303048f4c55f03284a095cc/')"
-                 class="rewardStatus__value" >
-                 Info <div class="chevron"></div>
-              </div>                         
-         </div>
-         <div class="rewardStatus__item">
-            <div class="rewardStatus__label">Providing liquidity</div>  
-            <div (click)="openURL('https://medium.com/openpredict/how-to-guide-adding-liquidity-to-uniswap-pool-2dae1f53b8f8')"
-                 class="rewardStatus__value">
-                 Guide <div class="chevron"></div>
-              </div>                         
-         </div>            
-       </div>
-
-       <div class="harvest">
-         <div class="harvest__item m-center">
-            <div class="harvest__value" *ngIf="(poolData$ | async) as poolData"> {{poolData.ETHLP}}</div>
-            <div class="harvest__label">
-             OPT-ETH-LP held
-            </div>      
-            <button (click)="openURL('https://info.uniswap.org/pair/0xe7700d9cd80517ade303048f4c55f03284a095cc/')" class="btn btn-unlock">
-               <div class="btnInner">
-                  <span>Add Liquidity</span>                     
-               </div>
-            </button>                             
-         </div> 
-      </div>       
-       
-      </div>
-
-      <p>
-         Hold OPT-USDT-LP and earn OPT
+         Hold OPT-USDC-LP and earn OPT
        </p>  
       <div class="rewardStatus">
          <div class="rewardStatusData nodata">
             <div class="rewardStatus__item">
-               <div class="rewardStatus__label">Est. APY</div>  
-               <div class="rewardStatus__value" *ngIf="(poolData$ | async) as poolData; else loading"> {{poolData.USDTAPY}}%</div>
+               <div class="rewardStatus__label">Est. APR</div>  
+               <div class="rewardStatus__value" *ngIf="(poolData$ | async) as poolData; else loading"> {{poolData.USDCAPR}}%</div>
             </div>
            <div class="rewardStatus__item">
-              <div class="rewardStatus__label">OPT-USDT pair</div>  
-              <div (click)="openURL('https://info.uniswap.org/pair/0xc676ea0f3dd28d4207b713578ecee609ee525784/')"
+              <div class="rewardStatus__label">OPT-USDC pair</div>  
+              <div (click)="openURL('https://info.uniswap.org/pair/0xeab59cdd581e532a910b53f7396cd8fc27e49d6f/')"
                    class="rewardStatus__value" >
                    Info <div class="chevron"></div>
                 </div>                         
@@ -75,11 +33,11 @@
         
         <div class="harvest">
           <div class="harvest__item m-center">
-             <div class="harvest__value" *ngIf="(poolData$ | async) as poolData; else loading"> {{poolData.USDTLP}} </div>
+             <div class="harvest__value" *ngIf="(poolData$ | async) as poolData; else loading"> {{poolData.USDCLP}} </div>
              <div class="harvest__label">
-                OPT-USDT-LP held
+                OPT-USDC-LP held
              </div>      
-             <button (click)="openURL('https://info.uniswap.org/pair/0xc676ea0f3dd28d4207b713578ecee609ee525784/')" class="btn btn-unlock">
+             <button (click)="openURL('https://app.uniswap.org/#/add/0x4fe5851c9af07df9e5ad8217afae1ea72737ebda/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48')" class="btn btn-unlock">
                 <div class="btnInner">
                    <span>Add Liquidity</span>                     
                 </div>

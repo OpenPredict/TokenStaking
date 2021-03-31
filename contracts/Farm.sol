@@ -229,19 +229,19 @@ contract Farm is Ownable {
         maxStakeAmount = maxStakeAmount.add(amount);
     }
 
-    // migrate stakers from previous contract to this one.
+    // migrate stakers from previous contract to this one. can only be called before farm starts.
     function addStakes(uint _pid, address[] calldata stakers, uint256[] calldata amounts) external onlyOwner {
+        require(block.number < startBlock, "addStakes: farm started.");
         for(uint i=0; i<stakers.length; i++){
             UserInfo storage user = userInfo[_pid][stakers[i]];
             PoolInfo storage pool = poolInfo[_pid];
             user.amount = user.amount.add(amounts[i]);
-            user.rewardDebt = user.amount.mul(pool.accERC20PerShare).div(1e36);
             pool.supply = pool.supply.add(amounts[i]);
             pool.lpToken.safeTransferFrom(address(msg.sender), address(this), amounts[i]);
         }       
     }
 
-    // revoke amount to contract owner.
+    // revoke amount to contract owner. EMERGENCY ONLY.
     function revoke(uint _pid) external onlyOwner {
         PoolInfo storage pool = poolInfo[_pid];
         uint256 supply = pool.lpToken.balanceOf(address(this));

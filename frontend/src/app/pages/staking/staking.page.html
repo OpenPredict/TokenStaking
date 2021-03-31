@@ -22,12 +22,12 @@
           </span>      
         </h1>
         <p class="stakingPairs">
-          Hold OPT-USDT-LP / OPT-ETH-LP
+          Hold OPT-USDC-LP
           <br>
           Earn OPT
         </p>
         <h2 class="opHeader apy opHeader__light">
-          APY: <span *ngIf="(poolData$ | async) as poolData; else loading">{{(poolData.ETHAPY + poolData.USDTAPY) / 2}}%</span>
+          APR: <span *ngIf="(poolData$ | async) as poolData; else loading">{{poolData.USDCAPR}}%</span>
         </h2>
         <p class="stakingPairs">
           - Daily: 0.3% (of Pool Volume)
@@ -35,33 +35,6 @@
           - Bi-weekly: Yield Farming Reward
         </p>
         <button class="btn btn-unlock" (click)="open('uniswap')">
-          <div class="btnInner">
-              <span>Select</span>                     
-          </div>
-        </button>      
-      </div>
-      
-      <div class="farmingOption">
-        <img src="/assets/img/balancer-logo.svg" alt="">
-        <h1 class="opHeader stakingHeader">
-          <span>
-            Balancer Liquidity Farming
-          </span>
-        </h1>
-        <p class="stakingPairs">
-          Hold OPT-USDC-LP
-          <br>
-          Earn OPT
-        </p>
-        <h2 class="opHeader apy opHeader__light">
-          APY: <span *ngIf="(poolData$ | async) as poolData; else loading">{{ poolData.USDCAPY }}%</span>
-        </h2>
-        <p class="stakingPairs">
-          - Daily: 0.05% (of Pool Volume)
-          <br>
-          - Bi-weekly: Yield Farming Reward
-        </p>
-        <button class="btn btn-unlock" (click)="open('balancer')">
           <div class="btnInner">
               <span>Select</span>                     
           </div>
@@ -81,7 +54,7 @@
           Earn OPT
         </p>
         <h2 class="opHeader apy opHeader__light">
-          APY: 39%
+          APR: 39%
         </h2>
         <p class="stakingPairs">
           - Block payout: 0.016 OPT

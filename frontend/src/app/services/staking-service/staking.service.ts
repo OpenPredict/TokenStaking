@@ -45,15 +45,15 @@ export class StakingService {
         console.log('network: ' + networkName);
         if (networkName === 'homestead'){ // mainnet
           contractAddresses['OpenPredict']  = '0x4fe5851c9af07df9e5ad8217afae1ea72737ebda';
-          contractAddresses['Farm'] = '0x33a48a75d4bBf189B96fe17a72B8AE2162a60203';
+          contractAddresses['Farm'] = '0x9087132c488eb879d2cdd1b1f6fb655f739b1732';
         }
         if (networkName === 'kovan'){
           contractAddresses['OpenPredict']  = '0x44c55E45956503c7C097b622Cd21e209161C8e63';
           contractAddresses['Farm'] = '0x9c16EfFE9aF5Fd06dE88C3fC6517CFbBe1A6C10e';
         }
         if (networkName === 'unknown'){ // localhost
-          contractAddresses['OpenPredict'] = '0x9561C133DD8580860B6b7E504bC5Aa500f0f06a7';
-          contractAddresses['Farm']        = '0xe982E462b094850F12AF94d21D470e21bE9D0E9C';
+          contractAddresses['OpenPredict'] = '0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab';
+          contractAddresses['Farm']        = '0x5b1869D9A4C187F2EAa108f3062412ecf0526b24';
         }
       });
     }

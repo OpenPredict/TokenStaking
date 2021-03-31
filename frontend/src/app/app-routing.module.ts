@@ -31,10 +31,6 @@ const routes: Routes = [
     path: 'uniswap',
     loadChildren: () => import('./pages/uniswap/uniswap.module').then( m => m.UniswapPageModule)
   },
-  {
-    path: 'balancer',
-    loadChildren: () => import('./pages/balancer/balancer.module').then( m => m.BalancerPageModule)
-  },
 ];
 
 @NgModule({
