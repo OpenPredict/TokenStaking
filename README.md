@@ -27,6 +27,12 @@ Withdraw initial deposit(s), plus any staking rewards.
 
 `truffle compile`
 
+# Keys for Kovan deployment
+
+`mv .env-example .env`
+
+- replace PRIVATE_KEY and INFURA_KEY with your keys
+
 ## Local app
 
 ### Run blockchain
